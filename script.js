@@ -57,22 +57,56 @@ function submitForm(event) {
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
     
-    // For now, we'll just log the data and show success
-    // Later, you can integrate with a backend service
-    console.log('Form submission:', data);
+    // Show loading state
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    const originalText = submitButton.innerHTML;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    submitButton.disabled = true;
     
-    // Store in localStorage for now (you can replace this with actual backend)
-    const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
-    responses.push({
-        ...data,
-        timestamp: new Date().toISOString()
+    // Send to Google Sheets
+    fetch('https://script.google.com/macros/s/AKfycbzHdWQNBFRrKUPJc99b7YW9gdDp_-s1paFPHi8ChsQ_fX44UpgK8baVE03Kab0RF1NH/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(() => {
+        // Also store locally as backup
+        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
+        responses.push({
+            ...data,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('weddingResponses', JSON.stringify(responses));
+        
+        // Close form modal and show success
+        closeModal();
+        document.getElementById('successModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    })
+    .catch((error) => {
+        console.error('Error submitting form:', error);
+        
+        // Fallback: store locally and show success anyway
+        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
+        responses.push({
+            ...data,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('weddingResponses', JSON.stringify(responses));
+        
+        // Close form modal and show success
+        closeModal();
+        document.getElementById('successModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    })
+    .finally(() => {
+        // Reset button state
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
     });
-    localStorage.setItem('weddingResponses', JSON.stringify(responses));
-    
-    // Close form modal and show success
-    closeModal();
-    document.getElementById('successModal').style.display = 'block';
-    document.body.style.overflow = 'hidden';
 }
 
 // Close modals when clicking outside
