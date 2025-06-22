@@ -27,7 +27,7 @@ function showForm(responseType) {
     
     if (responseType === 'planning') {
         responseField.value = 'Planning to come!';
-        formTitle.textContent = "We're so excited you're planning to come!";
+        formTitle.textContent = "We're so excited!";
     } else {
         responseField.value = "Can't make it";
         formTitle.textContent = "We understand and will miss you!";

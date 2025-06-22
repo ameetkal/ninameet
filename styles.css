@@ -277,6 +277,10 @@ body {
     margin-bottom: 20px;
 }
 
+.form-group:first-of-type {
+    margin-top: 20px;
+}
+
 .form-group label {
     display: block;
     margin-bottom: 8px;
@@ -313,6 +317,14 @@ body {
     gap: 15px;
     justify-content: flex-end;
     margin-top: 30px;
+}
+
+.form-actions .btn-primary {
+    order: 1;
+}
+
+.form-actions .btn-secondary {
+    order: 2;
 }
 
 /* Success Modal */
@@ -396,6 +408,14 @@ body {
     
     .form-actions {
         flex-direction: column;
+    }
+    
+    .form-actions .btn-primary {
+        order: 1;
+    }
+    
+    .form-actions .btn-secondary {
+        order: 2;
     }
     
     .purpose {
