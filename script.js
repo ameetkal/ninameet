@@ -11,7 +11,7 @@ function initPhotoFlip() {
             mainPhoto.src = 'ninameet-photo.jpeg';
             isFlipped = false;
         } else {
-            mainPhoto.src = 'ninameet-photo3.jpeg';
+            mainPhoto.src = 'ninameet-photo2.jpeg';
             isFlipped = true;
         }
         
@@ -29,7 +29,7 @@ function initPhotoFlip() {
             mainPhoto.src = 'ninameet-photo.jpeg';
             isFlipped = false;
         } else {
-            mainPhoto.src = 'ninameet-photo3.jpeg';
+            mainPhoto.src = 'ninameet-photo2.jpeg';
             isFlipped = true;
         }
         
