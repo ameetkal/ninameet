@@ -150,7 +150,7 @@ body {
     position: absolute;
     top: 15px;
     right: 15px;
-    font-size: 1.5rem;
+    font-size: 3.75rem;
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;
