@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nina & Ameet - Save the Date</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section with Photo -->
+        <div class="hero-section">
+            <header class="hero">
+                <div class="hero-content">
+                    <h1 class="main-title">Save the Date!</h1>
+                    <h2 class="couple-names">Nina & Ameet</h2>
+                    <p class="wedding-announcement">We're getting married!</p>
+                    
+                    <div class="date-location">
+                        <div class="date">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>June 19 - 21, 2026</span>
+                        </div>
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Marseille, France</span>
+                        </div>
+                    </div>
+
+                    <div class="countdown" id="countdown">
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="days">000</span>
+                            <span class="countdown-label">Days</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="hours">00</span>
+                            <span class="countdown-label">Hours</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="minutes">00</span>
+                            <span class="countdown-label">Minutes</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Couple Photo Section -->
+            <section class="couple-photo">
+                <div class="photo-container">
+                    <img src="ninameet-photo.jpeg" alt="Nina & Ameet" class="couple-image">
+                </div>
+            </section>
+        </div>
+
+        <!-- Purpose Section -->
+        <section class="purpose">
+            <div class="purpose-content">
+                <h3>We'd Love to Know!</h3>
+                <p>We're finalizing the details, but we'd love to know if you're planning to come—or if you already know you won't be able to make it.</p>
+                <p>This isn't a formal RSVP, just a quick check to help us plan 🥂</p>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="showForm('planning')">
+                        <i class="fas fa-check-circle"></i>
+                        I'm planning to come!
+                    </button>
+                    <button class="btn btn-secondary" onclick="showForm('cant-make-it')">
+                        <i class="fas fa-times-circle"></i>
+                        I can't make it
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Form Modal -->
+        <div class="modal" id="formModal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h3 id="formTitle">Tell us more!</h3>
+                <form id="rsvpForm" onsubmit="submitForm(event)">
+                    <div class="form-group">
+                        <label for="fullName">Full Name *</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="response">Your Response</label>
+                        <input type="text" id="response" name="response" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="question">A fun question for us! *</label>
+                        <textarea id="question" name="question" rows="3" placeholder="Ask us anything! What's your favorite food? Where should we honeymoon? etc." required></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Send Response
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal" id="successModal">
+            <div class="modal-content">
+                <div class="success-content">
+                    <i class="fas fa-check-circle success-icon"></i>
+                    <h3>Thank you!</h3>
+                    <p>We've received your response and can't wait to celebrate with you!</p>
+                    <p>We'll be in touch with more details soon.</p>
+                    <button class="btn btn-primary" onclick="closeSuccessModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
