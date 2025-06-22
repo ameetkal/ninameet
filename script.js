@@ -1,3 +1,44 @@
+// Photo Flip Easter Egg
+function initPhotoFlip() {
+    const photoContainer = document.querySelector('.photo-container');
+    const mainPhoto = document.getElementById('mainPhoto');
+    if (!photoContainer || !mainPhoto) return;
+    
+    let isFlipped = false;
+    
+    photoContainer.addEventListener('click', function() {
+        if (isFlipped) {
+            mainPhoto.src = 'ninameet-photo.jpeg';
+            isFlipped = false;
+        } else {
+            mainPhoto.src = 'ninameet-photo2.jpeg';
+            isFlipped = true;
+        }
+        
+        // Optional: Add a subtle sound effect or haptic feedback
+        // For mobile devices
+        if ('vibrate' in navigator) {
+            navigator.vibrate(50);
+        }
+    });
+    
+    // Add touch support for mobile
+    photoContainer.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if (isFlipped) {
+            mainPhoto.src = 'ninameet-photo.jpeg';
+            isFlipped = false;
+        } else {
+            mainPhoto.src = 'ninameet-photo2.jpeg';
+            isFlipped = true;
+        }
+        
+        if ('vibrate' in navigator) {
+            navigator.vibrate(50);
+        }
+    });
+}
+
 // Wedding date - June 19, 2026 (start of the wedding celebration)
 const weddingDate = new Date('June 19, 2026 00:00:00').getTime();
 
@@ -57,56 +98,64 @@ function submitForm(event) {
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
     
+    console.log('Submitting form data:', data);
+    
     // Show loading state
     const submitButton = event.target.querySelector('button[type="submit"]');
     const originalText = submitButton.innerHTML;
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitButton.disabled = true;
     
-    // Send to Google Sheets
-    fetch('https://script.google.com/macros/s/AKfycbzHdWQNBFRrKUPJc99b7YW9gdDp_-s1paFPHi8ChsQ_fX44UpgK8baVE03Kab0RF1NH/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-    .then(() => {
-        // Also store locally as backup
-        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
-        responses.push({
-            ...data,
-            timestamp: new Date().toISOString()
-        });
-        localStorage.setItem('weddingResponses', JSON.stringify(responses));
-        
-        // Close form modal and show success
-        closeModal();
-        document.getElementById('successModal').style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    })
-    .catch((error) => {
-        console.error('Error submitting form:', error);
-        
-        // Fallback: store locally and show success anyway
-        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
-        responses.push({
-            ...data,
-            timestamp: new Date().toISOString()
-        });
-        localStorage.setItem('weddingResponses', JSON.stringify(responses));
-        
-        // Close form modal and show success
-        closeModal();
-        document.getElementById('successModal').style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    })
-    .finally(() => {
-        // Reset button state
-        submitButton.innerHTML = originalText;
-        submitButton.disabled = false;
+    // Send to Google Sheets using a different approach
+    console.log('Sending to Google Sheets...');
+    
+    // Create a form element to submit data
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbx0xc5pOpjWR3nymvPjSIJyTHa8kfhai3UZePf7Gu6GsqWGqoTSgSunEOzkncaa79_mkg/exec';
+    form.target = 'hidden-iframe';
+    
+    // Add form data
+    Object.keys(data).forEach(key => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = data[key];
+        form.appendChild(input);
     });
+    
+    // Create hidden iframe for submission
+    let iframe = document.getElementById('hidden-iframe');
+    if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'hidden-iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+    }
+    
+    // Submit the form
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    // Store locally as backup and show success
+    const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
+    responses.push({
+        ...data,
+        timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('weddingResponses', JSON.stringify(responses));
+    
+    console.log('Form submitted, showing success...');
+    
+    // Close form modal and show success
+    closeModal();
+    document.getElementById('successModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    // Reset button state
+    submitButton.innerHTML = originalText;
+    submitButton.disabled = false;
 }
 
 // Close modals when clicking outside
@@ -149,6 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize background animations
     createFloatingElements();
     initCanvas();
+    initPhotoFlip();
     
     // Animate elements on load
     const animatedElements = document.querySelectorAll('.hero-content > *, .purpose-content > *, .button-group > *');

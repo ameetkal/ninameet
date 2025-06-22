@@ -135,6 +135,8 @@ body {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    cursor: pointer;
 }
 
 .couple-image {
@@ -144,7 +146,23 @@ body {
     transition: transform 0.3s ease;
 }
 
-.couple-image:hover {
+.photo-hint {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    z-index: 10;
+}
+
+.photo-container:hover .photo-hint {
+    opacity: 0.8;
+}
+
+.photo-container:hover {
     transform: scale(1.02);
 }
 
@@ -331,6 +349,11 @@ body {
 .success-content {
     text-align: center;
     padding: 20px 0;
+}
+
+.success-content .btn {
+    margin: 0 auto;
+    display: block;
 }
 
 .success-icon {
