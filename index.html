@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Background Canvas for Animations -->
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <!-- Floating Elements Container -->
+    <div id="floatingElements"></div>
+    
     <div class="container">
         <!-- Hero Section with Photo -->
         <div class="hero-section">
@@ -34,14 +40,6 @@
                             <span class="countdown-number" id="days">000</span>
                             <span class="countdown-label">Days</span>
                         </div>
-                        <div class="countdown-item">
-                            <span class="countdown-number" id="hours">00</span>
-                            <span class="countdown-label">Hours</span>
-                        </div>
-                        <div class="countdown-item">
-                            <span class="countdown-number" id="minutes">00</span>
-                            <span class="countdown-label">Minutes</span>
-                        </div>
                     </div>
                 </div>
             </header>
@@ -58,19 +56,20 @@
         <section class="purpose">
             <div class="purpose-content">
                 <h3>We'd Love to Know!</h3>
-                <p>We're finalizing the details, but we'd love to know if you're planning to come—or if you already know you won't be able to make it.</p>
-                <p>This isn't a formal RSVP, just a quick check to help us plan 🥂</p>
                 
                 <div class="button-group">
                     <button class="btn btn-primary" onclick="showForm('planning')">
                         <i class="fas fa-check-circle"></i>
-                        I'm planning to come!
+                        Tentative yes!
                     </button>
                     <button class="btn btn-secondary" onclick="showForm('cant-make-it')">
                         <i class="fas fa-times-circle"></i>
                         I can't make it
                     </button>
                 </div>
+                
+                <p>We're finalizing the details, but we'd love to know if you're planning to come—or if you already know you won't be able to make it.</p>
+                <p>This isn't a formal RSVP, just a quick check to help us plan 🥂</p>
             </div>
         </section>
 

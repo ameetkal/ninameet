@@ -9,8 +9,6 @@ function updateCountdown() {
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
 
     document.getElementById('days').textContent = days;
-    document.getElementById('hours').textContent = '00';
-    document.getElementById('minutes').textContent = '00';
 
     if (distance < 0) {
         document.getElementById('countdown').innerHTML = '<div class="countdown-item"><span class="countdown-number">🎉</span><span class="countdown-label">Today!</span></div>';
@@ -114,6 +112,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Add some nice animations on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize background animations
+    createFloatingElements();
+    initCanvas();
+    
     // Animate elements on load
     const animatedElements = document.querySelectorAll('.hero-content > *, .purpose-content > *, .button-group > *');
     
@@ -168,3 +170,125 @@ document.head.appendChild(style);
 // Optional: Trigger confetti on form submission (you can remove this)
 // Uncomment the line below if you want confetti when someone submits the form
 // document.getElementById('rsvpForm').addEventListener('submit', createConfetti); 
+
+// Background Animations
+function createFloatingElements() {
+    const container = document.getElementById('floatingElements');
+    const weddingEmojis = ['💍', '💕', '🥂', '✨', '💒', '🌹'];
+    const colors = ['#fbbf24', '#059669', '#f59e0b', '#10b981'];
+    
+    // Create floating emojis
+    function createEmoji() {
+        const emoji = document.createElement('div');
+        emoji.className = 'floating-element';
+        emoji.textContent = weddingEmojis[Math.floor(Math.random() * weddingEmojis.length)];
+        emoji.style.left = Math.random() * 100 + 'vw';
+        emoji.style.animationDelay = Math.random() * 8 + 's';
+        emoji.style.animationDuration = (Math.random() * 4 + 6) + 's';
+        container.appendChild(emoji);
+        
+        // Remove emoji after animation
+        setTimeout(() => {
+            if (emoji.parentNode) {
+                emoji.parentNode.removeChild(emoji);
+            }
+        }, 10000);
+    }
+    
+    // Create sparkles
+    function createSparkle() {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'floating-sparkle';
+        sparkle.style.left = Math.random() * 100 + 'vw';
+        sparkle.style.top = Math.random() * 100 + 'vh';
+        sparkle.style.animationDelay = Math.random() * 6 + 's';
+        sparkle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        container.appendChild(sparkle);
+        
+        // Remove sparkle after animation
+        setTimeout(() => {
+            if (sparkle.parentNode) {
+                sparkle.parentNode.removeChild(sparkle);
+            }
+        }, 8000);
+    }
+    
+    // Create initial elements
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => createEmoji(), i * 1000);
+    }
+    
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => createSparkle(), i * 500);
+    }
+    
+    // Continue creating elements
+    setInterval(createEmoji, 3000);
+    setInterval(createSparkle, 2000);
+}
+
+// Canvas Particle System
+function initCanvas() {
+    const canvas = document.getElementById('backgroundCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Particle class
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 2 + 1;
+            this.opacity = Math.random() * 0.5 + 0.2;
+            this.color = ['#fbbf24', '#059669', '#f59e0b'][Math.floor(Math.random() * 3)];
+        }
+        
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.opacity;
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+    
+    // Create particles
+    const particles = [];
+    for (let i = 0; i < 50; i++) {
+        particles.push(new Particle());
+    }
+    
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+} 
