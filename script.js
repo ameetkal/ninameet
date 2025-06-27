@@ -112,7 +112,7 @@ function submitForm(event) {
     // Create a form to submit via iframe
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = 'https://script.google.com/macros/s/AKfycbwCPgJ1g4T7cC4Eq9VkEffWKnOxq-kNVojZJLInHmjfDJ5XRBi2WCqNIenRD9r0ti-q/exec';
+    form.action = 'https://script.google.com/macros/s/AKfycbwanxKRHcCm3S-sfUWj0k-Gpzf0tfYeNFIpXQsJ8HpxwkNTXaPb-0STYOjr-xc5iOd4lA/exec';
     form.target = 'hidden-iframe';
     form.style.display = 'none';
     
