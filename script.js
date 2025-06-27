@@ -115,7 +115,7 @@ function submitForm(event) {
         params.append(key, data[key]);
     });
     
-    fetch('https://script.google.com/macros/s/AKfycbx0xc5pOpjWR3nymvPjSIJyTHa8kfhai3UZePf7Gu6GsqWGqoTSgSunEOzkncaa79_mkg/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbwCPgJ1g4T7cC4Eq9VkEffWKnOxq-kNVojZJLInHmjfDJ5XRBi2WCqNIenRD9r0ti-q/exec', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
