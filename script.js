@@ -82,7 +82,10 @@ function closeModal() {
     const modal = document.getElementById('formModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto'; // Restore scrolling
-    document.getElementById('rsvpForm').reset();
+    // Only reset the user-entered fields, not the response field
+    document.getElementById('fullName').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('question').value = '';
 }
 
 function closeSuccessModal() {
@@ -95,10 +98,28 @@ function closeSuccessModal() {
 function submitForm(event) {
     event.preventDefault();
     
+    // Debug: Check form field values directly
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const response = document.getElementById('response').value;
+    const question = document.getElementById('question').value;
+    
+    console.log('Direct field values:', { fullName, email, response, question });
+    
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
     
-    console.log('Submitting form data:', data);
+    console.log('FormData object:', data);
+    
+    // Use direct values if FormData is empty
+    const finalData = {
+        fullName: data.fullName || fullName,
+        email: data.email || email,
+        response: data.response || response,
+        question: data.question || question
+    };
+    
+    console.log('Final data to submit:', finalData);
     
     // Show loading state
     const submitButton = event.target.querySelector('button[type="submit"]');
@@ -117,11 +138,11 @@ function submitForm(event) {
     form.style.display = 'none';
     
     // Add form fields
-    Object.keys(data).forEach(key => {
+    Object.keys(finalData).forEach(key => {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = key;
-        input.value = data[key];
+        input.value = finalData[key];
         form.appendChild(input);
     });
     
@@ -142,7 +163,7 @@ function submitForm(event) {
         // Store locally as backup
         const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
         responses.push({
-            ...data,
+            ...finalData,
             timestamp: new Date().toISOString()
         });
         localStorage.setItem('weddingResponses', JSON.stringify(responses));
