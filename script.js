@@ -106,56 +106,57 @@ function submitForm(event) {
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitButton.disabled = true;
     
-    // Send to Google Sheets using a different approach
+    // Send to Google Sheets using JSON
     console.log('Sending to Google Sheets...');
     
-    // Create a form element to submit data
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://script.google.com/macros/s/AKfycbx0xc5pOpjWR3nymvPjSIJyTHa8kfhai3UZePf7Gu6GsqWGqoTSgSunEOzkncaa79_mkg/exec';
-    form.target = 'hidden-iframe';
-    
-    // Add form data
-    Object.keys(data).forEach(key => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = data[key];
-        form.appendChild(input);
+    fetch('https://script.google.com/macros/s/AKfycbx0xc5pOpjWR3nymvPjSIJyTHa8kfhai3UZePf7Gu6GsqWGqoTSgSunEOzkncaa79_mkg/exec', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
+    .then(result => {
+        console.log('Success:', result);
+        
+        // Store locally as backup
+        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
+        responses.push({
+            ...data,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('weddingResponses', JSON.stringify(responses));
+        
+        // Close form modal and show success
+        closeModal();
+        document.getElementById('successModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        // Still store locally and show success to user
+        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
+        responses.push({
+            ...data,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('weddingResponses', JSON.stringify(responses));
+        
+        // Close form modal and show success
+        closeModal();
+        document.getElementById('successModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    })
+    .finally(() => {
+        // Reset button state
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
     });
-    
-    // Create hidden iframe for submission
-    let iframe = document.getElementById('hidden-iframe');
-    if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.id = 'hidden-iframe';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-    }
-    
-    // Submit the form
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-    
-    // Store locally as backup and show success
-    const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
-    responses.push({
-        ...data,
-        timestamp: new Date().toISOString()
-    });
-    localStorage.setItem('weddingResponses', JSON.stringify(responses));
-    
-    console.log('Form submitted, showing success...');
-    
-    // Close form modal and show success
-    closeModal();
-    document.getElementById('successModal').style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    
-    // Reset button state
-    submitButton.innerHTML = originalText;
-    submitButton.disabled = false;
 }
 
 // Close modals when clicking outside
