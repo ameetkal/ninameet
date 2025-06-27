@@ -106,15 +106,21 @@ function submitForm(event) {
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitButton.disabled = true;
     
-    // Send to Google Sheets using JSON
+    // Send to Google Sheets using form data
     console.log('Sending to Google Sheets...');
+    
+    // Create URLSearchParams for proper form encoding
+    const params = new URLSearchParams();
+    Object.keys(data).forEach(key => {
+        params.append(key, data[key]);
+    });
     
     fetch('https://script.google.com/macros/s/AKfycbx0xc5pOpjWR3nymvPjSIJyTHa8kfhai3UZePf7Gu6GsqWGqoTSgSunEOzkncaa79_mkg/exec', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(data)
+        body: params.toString()
     })
     .then(response => {
         console.log('Response status:', response.status);
