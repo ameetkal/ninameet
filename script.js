@@ -106,28 +106,38 @@ function submitForm(event) {
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitButton.disabled = true;
     
-    // Send to Google Sheets using form data
+    // Send to Google Sheets using iframe method (more reliable)
     console.log('Sending to Google Sheets...');
     
-    // Create URLSearchParams for proper form encoding
-    const params = new URLSearchParams();
+    // Create a form to submit via iframe
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbwCPgJ1g4T7cC4Eq9VkEffWKnOxq-kNVojZJLInHmjfDJ5XRBi2WCqNIenRD9r0ti-q/exec';
+    form.target = 'hidden-iframe';
+    form.style.display = 'none';
+    
+    // Add form fields
     Object.keys(data).forEach(key => {
-        params.append(key, data[key]);
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = data[key];
+        form.appendChild(input);
     });
     
-    fetch('https://script.google.com/macros/s/AKfycbwCPgJ1g4T7cC4Eq9VkEffWKnOxq-kNVojZJLInHmjfDJ5XRBi2WCqNIenRD9r0ti-q/exec', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString()
-    })
-    .then(response => {
-        console.log('Response status:', response.status);
-        return response.json();
-    })
-    .then(result => {
-        console.log('Success:', result);
+    // Create or get the hidden iframe
+    let iframe = document.getElementById('hidden-iframe');
+    if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'hidden-iframe';
+        iframe.name = 'hidden-iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+    }
+    
+    // Handle iframe load (success/error)
+    iframe.onload = function() {
+        console.log('Form submitted successfully');
         
         // Store locally as backup
         const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
@@ -141,28 +151,18 @@ function submitForm(event) {
         closeModal();
         document.getElementById('successModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
-    })
-    .catch(error => {
-        console.error('Error:', error);
         
-        // Still store locally and show success to user
-        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
-        responses.push({
-            ...data,
-            timestamp: new Date().toISOString()
-        });
-        localStorage.setItem('weddingResponses', JSON.stringify(responses));
-        
-        // Close form modal and show success
-        closeModal();
-        document.getElementById('successModal').style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    })
-    .finally(() => {
         // Reset button state
         submitButton.innerHTML = originalText;
         submitButton.disabled = false;
-    });
+        
+        // Clean up
+        document.body.removeChild(form);
+    };
+    
+    // Submit the form
+    document.body.appendChild(form);
+    form.submit();
 }
 
 // Close modals when clicking outside
