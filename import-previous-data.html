@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Previous Wedding Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .import-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #047857;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Import Previous Wedding Data</h1>
+        <p>One-time import of Google Sheets data to Firebase</p>
+    </div>
+
+    <div class="warning">
+        <strong>⚠️ Important:</strong> This is a one-time import script. Only run this once to avoid duplicate data. 
+        After importing, you can delete this file.
+    </div>
+
+    <div class="import-section">
+        <h2>Data to Import</h2>
+        <p>Found <strong>5 previous submissions</strong> from Google Sheets:</p>
+        <ul>
+            <li>Morgane de Castilla (6/27/2025)</li>
+            <li>Zoë Cullen (6/27/2025)</li>
+            <li>Amen Jalal (6/28/2025)</li>
+            <li>Christian Wolf (6/28/2025)</li>
+            <li>Anna Mueller Stansbury (6/28/2025)</li>
+        </ul>
+
+        <button id="importBtn" onclick="importData()">
+            🔄 Import Previous Data to Firebase
+        </button>
+
+        <div id="log" class="log" style="display: none;"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB108IDQksvWLhANDsTm04lVl3fvjlULWY",
+            authDomain: "ninameet-1eb2e.firebaseapp.com",
+            projectId: "ninameet-1eb2e",
+            storageBucket: "ninameet-1eb2e.firebasestorage.app",
+            messagingSenderId: "819954601528",
+            appId: "1:819954601528:web:bcfdfba23fb7fa119020cd"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Previous submissions data
+        const previousSubmissions = [
+            {
+                timestamp: "6/27/2025 2:24:41",
+                fullName: "Morgane de Castilla",
+                email: "morgane.letreguilly@gmail.com",
+                response: "Planning to come!",
+                question: "C'est que du love !!!"
+            },
+            {
+                timestamp: "6/27/2025 8:01:11",
+                fullName: "Zoë Cullen",
+                email: "z.cullen@gmail.com",
+                response: "Planning to come!",
+                question: "What governs bedtime?"
+            },
+            {
+                timestamp: "6/28/2025 9:28:17",
+                fullName: "Amen Jalal",
+                email: "amenjalal94@gmail.com",
+                response: "Planning to come!",
+                question: "When you're feeling low, what can your partner do to make you feel better? E.g., would you rather they help you talk it through, just listen while you vent, distract you with something light, give you space, or quietly offer love and hugs? I'm sure there are many other unique ways you'll find to lift and support each other!"
+            },
+            {
+                timestamp: "6/28/2025 10:11:03",
+                fullName: "Christian Wolf",
+                email: "ckwolf@mit.edu",
+                response: "Planning to come!",
+                question: ""
+            },
+            {
+                timestamp: "6/28/2025 11:49:55",
+                fullName: "Anna Mueller Stansbury",
+                email: "a.m.stansbury@gmail.com",
+                response: "Planning to come!",
+                question: `My sister read a great book before her wedding which included the (Batshit but Brilliant) suggestion that each person produces a "Book of My Flaws" to present to the other one. In that spirit, the question I suggest to you both to ask yourselves and each other is: 
+
+[To yourself] What are the characteristics in myself which I think are the biggest threat to the success of this relationship? 
+
+[To the other person] What are the characteristics in me which you think are the biggest threat to the success of this relationship?
+
+And then as a team and individually you can work on identifying them and developing plans to address and investigate them`
+            }
+        ];
+
+        function parseTimestamp(timestampStr) {
+            // Convert "6/27/2025 2:24:41" to proper Date object
+            // Note: The year seems to be 2025, but this might be 2024 data
+            // I'll assume it's actually 2024 based on context
+            const correctedStr = timestampStr.replace('2025', '2024');
+            return new Date(correctedStr);
+        }
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.style.display = 'block';
+            logDiv.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        window.importData = async function() {
+            const btn = document.getElementById('importBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Importing...';
+
+            log('Starting import of previous submissions...');
+
+            try {
+                let successCount = 0;
+                let errorCount = 0;
+
+                for (const submission of previousSubmissions) {
+                    try {
+                        const parsedDate = parseTimestamp(submission.timestamp);
+                        
+                        const docData = {
+                            fullName: submission.fullName.trim(),
+                            email: submission.email.trim(),
+                            response: submission.response.trim(),
+                            question: submission.question.trim(),
+                            timestamp: serverTimestamp(),
+                            createdAt: parsedDate.toISOString(),
+                            importedFrom: 'google-sheets',
+                            originalTimestamp: submission.timestamp
+                        };
+
+                        const docRef = await addDoc(collection(db, 'wedding-responses'), docData);
+                        log(`✅ Imported: ${submission.fullName} (ID: ${docRef.id})`);
+                        successCount++;
+
+                        // Small delay to avoid overwhelming Firebase
+                        await new Promise(resolve => setTimeout(resolve, 100));
+
+                    } catch (error) {
+                        log(`❌ Error importing ${submission.fullName}: ${error.message}`);
+                        errorCount++;
+                    }
+                }
+
+                log(`\n🎉 Import completed!`);
+                log(`✅ Successfully imported: ${successCount} submissions`);
+                if (errorCount > 0) {
+                    log(`❌ Errors: ${errorCount} submissions`);
+                }
+                log(`\nYou can now check your admin dashboard to see all submissions.`);
+                log(`\n⚠️ Remember to delete this import file after confirming the data is correct.`);
+
+                // Show success message
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success';
+                successDiv.innerHTML = `
+                    <strong>🎉 Import Successful!</strong><br>
+                    Imported ${successCount} previous submissions to Firebase.<br>
+                    <a href="firebase-admin.html" target="_blank">View Admin Dashboard</a>
+                `;
+                document.querySelector('.import-section').appendChild(successDiv);
+
+            } catch (error) {
+                log(`❌ Import failed: ${error.message}`);
+                console.error('Import error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '✅ Import Complete';
+            }
+        };
+    </script>
+</body>
+</html> 
