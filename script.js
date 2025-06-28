@@ -95,31 +95,23 @@ function closeSuccessModal() {
 }
 
 // Form Submission
-function submitForm(event) {
+async function submitForm(event) {
     event.preventDefault();
     
-    // Debug: Check form field values directly
+    // Get form field values
     const fullName = document.getElementById('fullName').value;
     const email = document.getElementById('email').value;
     const response = document.getElementById('response').value;
     const question = document.getElementById('question').value;
     
-    console.log('Direct field values:', { fullName, email, response, question });
-    
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData);
-    
-    console.log('FormData object:', data);
-    
-    // Use direct values if FormData is empty
     const finalData = {
-        fullName: data.fullName || fullName,
-        email: data.email || email,
-        response: data.response || response,
-        question: data.question || question
+        fullName: fullName.trim(),
+        email: email.trim(),
+        response: response.trim(),
+        question: question.trim()
     };
     
-    console.log('Final data to submit:', finalData);
+    console.log('Submitting data to Firebase:', finalData);
     
     // Show loading state
     const submitButton = event.target.querySelector('button[type="submit"]');
@@ -127,44 +119,30 @@ function submitForm(event) {
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitButton.disabled = true;
     
-    // Send to Google Sheets using iframe method (more reliable)
-    console.log('Sending to Google Sheets...');
-    
-    // Create a form to submit via iframe
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://script.google.com/macros/s/AKfycbwanxKRHcCm3S-sfUWj0k-Gpzf0tfYeNFIpXQsJ8HpxwkNTXaPb-0STYOjr-xc5iOd4lA/exec';
-    form.target = 'hidden-iframe';
-    form.style.display = 'none';
-    
-    // Add form fields
-    Object.keys(finalData).forEach(key => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = finalData[key];
-        form.appendChild(input);
-    });
-    
-    // Create or get the hidden iframe
-    let iframe = document.getElementById('hidden-iframe');
-    if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.id = 'hidden-iframe';
-        iframe.name = 'hidden-iframe';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-    }
-    
-    // Handle iframe load (success/error)
-    iframe.onload = function() {
-        console.log('Form submitted successfully');
+    try {
+        // Check if Firebase is available
+        if (!window.firebaseDB) {
+            throw new Error('Firebase not initialized. Please check your configuration.');
+        }
+        
+        // Add document to Firestore
+        const docRef = await window.firebaseAddDoc(
+            window.firebaseCollection(window.firebaseDB, 'wedding-responses'),
+            {
+                ...finalData,
+                timestamp: window.firebaseServerTimestamp(),
+                createdAt: new Date().toISOString() // Fallback timestamp
+            }
+        );
+        
+        console.log('Document written with ID: ', docRef.id);
         
         // Store locally as backup
         const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
         responses.push({
             ...finalData,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            firebaseId: docRef.id
         });
         localStorage.setItem('weddingResponses', JSON.stringify(responses));
         
@@ -173,17 +151,26 @@ function submitForm(event) {
         document.getElementById('successModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
         
+    } catch (error) {
+        console.error('Error adding document: ', error);
+        
+        // Store locally as backup on error
+        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
+        responses.push({
+            ...finalData,
+            timestamp: new Date().toISOString(),
+            status: 'failed',
+            error: error.message
+        });
+        localStorage.setItem('weddingResponses', JSON.stringify(responses));
+        
+        // Show error message
+        alert('Sorry, there was an error submitting your response. Your information has been saved locally and we\'ll try again later. Please contact us directly if this continues.');
+    } finally {
         // Reset button state
         submitButton.innerHTML = originalText;
         submitButton.disabled = false;
-        
-        // Clean up
-        document.body.removeChild(form);
-    };
-    
-    // Submit the form
-    document.body.appendChild(form);
-    form.submit();
+    }
 }
 
 // Close modals when clicking outside

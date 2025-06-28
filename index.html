@@ -126,5 +126,33 @@
     </div>
 
     <script src="script.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Your web app's Firebase configuration
+        // TODO: Replace with your actual Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyB108IDQksvWLhANDsTm04lVl3fvjlULWY",
+            authDomain: "ninameet-1eb2e.firebaseapp.com",
+            projectId: "ninameet-1eb2e",
+            storageBucket: "ninameet-1eb2e.firebasestorage.app",
+            messagingSenderId: "819954601528",
+            appId: "1:819954601528:web:bcfdfba23fb7fa119020cd"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // Make Firebase available globally
+        window.firebaseDB = db;
+        window.firebaseCollection = collection;
+        window.firebaseAddDoc = addDoc;
+        window.firebaseServerTimestamp = serverTimestamp;
+    </script>
 </body>
 </html> 
