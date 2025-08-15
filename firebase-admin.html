@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wedding Responses Admin</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -79,41 +80,409 @@
             font-weight: bold;
             color: #059669;
         }
+
+        /* Tab Styles */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: #059669;
+            color: white;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #d1d5db;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Date Management Styles */
+        .date-management {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .calendar-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-controls button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .calendar-controls span {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .calendar-container {
+            margin-bottom: 20px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-weight: 600;
+            color: #6b7280;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 15px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: #f3f4f6;
+        }
+
+        .calendar-day.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .calendar-day.booked {
+            background: #dc2626;
+            color: white;
+            border-color: #dc2626;
+        }
+
+        .calendar-day.requested {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        .calendar-day.other-month {
+            color: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .date-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .date-actions button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .date-actions button:last-child {
+            background: #059669;
+        }
+
+        .date-actions button:hover {
+            opacity: 0.9;
+        }
+
+        /* NYC Request Styles */
+        .nyc-request-item {
+            border: 1px solid #e5e5e5;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #059669;
+        }
+
+        .nyc-request-item.pending {
+            border-left-color: #f59e0b;
+        }
+
+        .nyc-request-item.confirmed {
+            border-left-color: #059669;
+        }
+
+        .nyc-request-item.declined {
+            border-left-color: #dc2626;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-declined {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Calendar Legend Styles */
+        .calendar-legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+
+        .legend-color.available {
+            background: #e5e7eb;
+        }
+
+        .legend-color.requested {
+            background: #f59e0b;
+        }
+
+        .legend-color.booked {
+            background: #dc2626;
+        }
+
+        /* Tooltip Styles */
+        .calendar-day {
+            position: relative;
+        }
+
+        .calendar-day:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .calendar-day:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1f2937;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .calendar-day:hover::after,
+        .calendar-day:hover::before {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Nina & Ameet Wedding Responses</h1>
-        <p>Admin Dashboard</p>
-    </div>
-
-    <div class="stats" id="stats">
-        <div class="stat-card">
-            <div class="stat-number" id="totalCount">-</div>
-            <div>Total Responses</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="planningCount">-</div>
-            <div>Planning to Come</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="cantMakeItCount">-</div>
-            <div>Can't Make It</div>
+    <div id="passwordScreen" style="display: block;">
+        <div style="text-align: center; padding: 100px 20px;">
+            <h2>Admin Access Required</h2>
+            <p>Enter password to access the dashboard:</p>
+            <input type="password" id="passwordInput" placeholder="Password" style="padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">
+            <br>
+            <button onclick="checkPassword()" style="margin-top: 10px;">Access Dashboard</button>
+            <p id="passwordError" style="color: red; margin-top: 10px; display: none;">Incorrect password</p>
         </div>
     </div>
 
-    <div class="controls">
-        <button onclick="loadResponses()">🔄 Refresh Data</button>
-        <button onclick="exportToCSV()">📊 Export to CSV</button>
-        <button onclick="exportToJSON()">📋 Export to JSON</button>
-    </div>
-
-    <div class="responses">
-        <h2>Recent Responses</h2>
-        <div id="responsesList" class="loading">
-            Click "Refresh Data" to load responses...
+    <div id="adminDashboard" style="display: none;">
+        <div class="header">
+            <h1>Nina & Ameet Admin Dashboard</h1>
+            <p>Manage Wedding RSVPs and NYC Stay Requests</p>
         </div>
-    </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('wedding')">Wedding RSVPs</button>
+            <button class="tab-button" onclick="showTab('nyc')">NYC Stay Management</button>
+        </div>
+
+        <!-- Wedding RSVPs Tab -->
+        <div id="weddingTab" class="tab-content active">
+            <div class="stats" id="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCount">-</div>
+                    <div>Total Responses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="planningCount">-</div>
+                    <div>Planning to Come</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="cantMakeItCount">-</div>
+                    <div>Can't Make It</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="loadResponses()">🔄 Refresh Data</button>
+                <button onclick="exportToCSV()">📊 Export to CSV</button>
+                <button onclick="exportToJSON()">📋 Export to JSON</button>
+            </div>
+
+            <div class="responses">
+                <h2>Recent Responses</h2>
+                <div id="responsesList" class="loading">
+                    Click "Refresh Data" to load responses...
+                </div>
+            </div>
+        </div>
+
+        <!-- NYC Stay Management Tab -->
+        <div id="nycTab" class="tab-content">
+            <div class="stats" id="nycStats">
+                <div class="stat-card">
+                    <div class="stat-number" id="nycTotalCount">-</div>
+                    <div>Total Requests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="nycPendingCount">-</div>
+                    <div>Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="nycConfirmedCount">-</div>
+                    <div>Confirmed</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="loadNYCRequests()">🔄 Refresh NYC Data</button>
+                <button onclick="exportNYCToCSV()">📊 Export NYC to CSV</button>
+                <button onclick="exportNYCToJSON()">📋 Export NYC to JSON</button>
+            </div>
+
+            <div class="responses">
+                <h2>NYC Stay Requests</h2>
+                <div id="nycRequestsList" class="loading">
+                    Click "Refresh NYC Data" to load requests...
+                </div>
+            </div>
+
+            <div class="date-management">
+                <h2>Date Management</h2>
+                <div class="calendar-controls">
+                    <button onclick="previousMonth()">‹</button>
+                    <span id="currentMonthDisplay">October 2025</span>
+                    <button onclick="nextMonth()">›</button>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-grid" id="adminCalendarGrid">
+                        <!-- Calendar will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="date-actions">
+                    <button onclick="blockSelectedDates()">🚫 Block Selected Dates</button>
+                    <button onclick="unblockSelectedDates()">✅ Unblock Selected Dates</button>
+                </div>
+                
+                <!-- Calendar Legend -->
+                <div class="calendar-legend">
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color available"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color requested"></div>
+                            <span>Requested</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color booked"></div>
+                            <span>Booked</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Close adminDashboard div -->
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -244,6 +613,429 @@
             a.download = `wedding-responses-${new Date().toISOString().split('T')[0]}.json`;
             a.click();
             window.URL.revokeObjectURL(url);
+        };
+
+        // Password protection
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === 'kallarou') {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                // Load data after successful login
+                loadResponses();
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        // Allow Enter key to submit password
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Tab switching
+        window.showTab = function(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Load data for the selected tab
+            if (tabName === 'nyc') {
+                loadNYCRequests();
+                loadBlockedDates();
+                renderAdminCalendar();
+            }
+        };
+
+        // NYC Data Management
+        let nycRequests = [];
+        let blockedDates = [];
+        let adminCurrentDate = new Date();
+        let selectedDates = [];
+
+        window.loadNYCRequests = async function() {
+            const requestsList = document.getElementById('nycRequestsList');
+            requestsList.innerHTML = '<div class="loading">Loading NYC requests...</div>';
+
+            try {
+                const q = query(collection(db, 'nyc-stay-requests'), orderBy('timestamp', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                nycRequests = [];
+                querySnapshot.forEach((doc) => {
+                    nycRequests.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                displayNYCRequests();
+                updateNYCStats();
+            } catch (error) {
+                console.error('Error loading NYC requests:', error);
+                requestsList.innerHTML = '<div style="color: red;">Error loading NYC requests. Check console for details.</div>';
+            }
+        };
+
+        function displayNYCRequests() {
+            const requestsList = document.getElementById('nycRequestsList');
+            
+            if (nycRequests.length === 0) {
+                requestsList.innerHTML = '<div>No NYC requests yet.</div>';
+                return;
+            }
+
+            const html = nycRequests.map(request => {
+                const date = request.timestamp ? 
+                    new Date(request.timestamp.seconds * 1000).toLocaleDateString() : 
+                    new Date().toLocaleDateString();
+                
+                const dates = request.dates.map(timestamp => 
+                    new Date(timestamp).toLocaleDateString()
+                ).join(', ');
+                
+                const statusClass = `status-${request.status}`;
+                
+                return `
+                    <div class="nyc-request-item ${request.status}">
+                        <h3>${request.visitors.join(', ')}</h3>
+                        <p><strong>Dates:</strong> ${dates}</p>
+                        <p><strong>Skill:</strong> ${request.skill}</p>
+                        ${request.additionalInfo ? `<p><strong>Additional Info:</strong> ${request.additionalInfo}</p>` : ''}
+                        <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${request.status}</span></p>
+                        <p><small><strong>Submitted:</strong> ${date}</small></p>
+                        <div class="request-actions">
+                            <button onclick="updateStatus('${request.id}', 'confirmed')" ${request.status === 'confirmed' ? 'disabled' : ''}>✅ Confirm</button>
+                            <button onclick="updateStatus('${request.id}', 'declined')" ${request.status === 'declined' ? 'disabled' : ''}>❌ Decline</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            requestsList.innerHTML = html;
+        }
+
+        function updateNYCStats() {
+            const total = nycRequests.length;
+            const pending = nycRequests.filter(r => r.status === 'pending').length;
+            const confirmed = nycRequests.filter(r => r.status === 'confirmed').length;
+
+            document.getElementById('nycTotalCount').textContent = total;
+            document.getElementById('nycPendingCount').textContent = pending;
+            document.getElementById('nycConfirmedCount').textContent = confirmed;
+        }
+
+        // Export functions for NYC data
+        window.exportNYCToCSV = function() {
+            if (nycRequests.length === 0) {
+                alert('No NYC data to export. Please refresh data first.');
+                return;
+            }
+
+            const headers = ['Visitors', 'Dates', 'Skill', 'Additional Info', 'Status', 'Submitted'];
+            const csvContent = [
+                headers.join(','),
+                ...nycRequests.map(request => {
+                    const date = request.timestamp ? 
+                        new Date(request.timestamp.seconds * 1000).toISOString() : 
+                        new Date().toISOString();
+                    
+                    const dates = request.dates.map(timestamp => 
+                        new Date(timestamp).toISOString().split('T')[0]
+                    ).join('; ');
+                    
+                    return [
+                        `"${request.visitors.join('; ')}"`,
+                        `"${dates}"`,
+                        `"${request.skill}"`,
+                        `"${request.additionalInfo || ''}"`,
+                        `"${request.status}"`,
+                        `"${date}"`
+                    ].join(',');
+                })
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nyc-stay-requests-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+
+        window.exportNYCToJSON = function() {
+            if (nycRequests.length === 0) {
+                alert('No NYC data to export. Please refresh data first.');
+                return;
+            }
+
+            const jsonContent = JSON.stringify(nycRequests, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nyc-stay-requests-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+
+        // Date Management Functions
+        window.previousMonth = function() {
+            adminCurrentDate.setMonth(adminCurrentDate.getMonth() - 1);
+            renderAdminCalendar();
+        };
+
+        window.nextMonth = function() {
+            adminCurrentDate.setMonth(adminCurrentDate.getMonth() + 1);
+            renderAdminCalendar();
+        };
+
+        function renderAdminCalendar() {
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const currentMonth = adminCurrentDate.getMonth();
+            const currentYear = adminCurrentDate.getFullYear();
+            
+            document.getElementById('currentMonthDisplay').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+            
+            const grid = document.getElementById('adminCalendarGrid');
+            grid.innerHTML = '';
+            
+            // Add weekday headers
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-weekday';
+                dayHeader.textContent = day;
+                grid.appendChild(dayHeader);
+            });
+            
+            // Add calendar days
+            for (let i = 0; i < 42; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = date.getDate();
+                
+                if (date.getMonth() !== currentMonth) {
+                    dayElement.classList.add('other-month');
+                } else {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    if (date < today) {
+                        dayElement.classList.add('other-month');
+                    } else if (isDateBooked(date)) {
+                        dayElement.classList.add('booked');
+                        // Add tooltip for booked dates
+                        const tooltip = getDateTooltip(date, 'booked');
+                        if (tooltip) {
+                            dayElement.setAttribute('data-tooltip', tooltip);
+                        }
+                    } else if (isDateRequested(date)) {
+                        dayElement.classList.add('requested');
+                        // Add tooltip for requested dates
+                        const tooltip = getDateTooltip(date, 'requested');
+                        if (tooltip) {
+                            dayElement.setAttribute('data-tooltip', tooltip);
+                        }
+                    }
+                    
+                    dayElement.addEventListener('click', () => toggleDateSelection(date));
+                }
+                
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function isDateBooked(date) {
+            // Check if date is blocked by admin
+            const isBlocked = blockedDates.some(blockedDate => 
+                date.toDateString() === new Date(blockedDate.date.seconds * 1000).toDateString()
+            );
+            
+            // Check if date is confirmed
+            const isConfirmed = nycRequests.some(request => 
+                request.status === 'confirmed' && 
+                request.dates.some(requestDate => 
+                    date.toDateString() === new Date(requestDate).toDateString()
+                )
+            );
+            
+            return isBlocked || isConfirmed;
+        }
+
+        function isDateRequested(date) {
+            return nycRequests.some(request => 
+                request.status === 'pending' && 
+                request.dates.some(requestDate => 
+                    date.toDateString() === new Date(requestDate).toDateString()
+                )
+            );
+        }
+
+        function toggleDateSelection(date) {
+            const dateString = date.toDateString();
+            const index = selectedDates.findIndex(d => d.toDateString() === dateString);
+            
+            if (index > -1) {
+                selectedDates.splice(index, 1);
+            } else {
+                selectedDates.push(date);
+            }
+            
+            renderAdminCalendar();
+        }
+
+        window.blockSelectedDates = async function() {
+            if (selectedDates.length === 0) {
+                alert('Please select dates to block.');
+                return;
+            }
+
+            try {
+                for (const date of selectedDates) {
+                    await addDoc(collection(db, 'blocked-dates'), {
+                        date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+                        reason: 'Admin blocked',
+                        blockedBy: 'Admin',
+                        timestamp: serverTimestamp()
+                    });
+                }
+                
+                alert(`Blocked ${selectedDates.length} date(s).`);
+                selectedDates = [];
+                loadBlockedDates();
+                renderAdminCalendar();
+            } catch (error) {
+                console.error('Error blocking dates:', error);
+                alert('Error blocking dates. Please try again.');
+            }
+        };
+
+        window.unblockSelectedDates = async function() {
+            if (selectedDates.length === 0) {
+                alert('Please select dates to unblock.');
+                return;
+            }
+
+            // This would require additional Firebase functions to delete documents
+            // For now, we'll just show a message
+            alert('Unblocking dates requires additional setup. Please manually remove from Firebase console for now.');
+            selectedDates = [];
+            renderAdminCalendar();
+        };
+
+        async function loadBlockedDates() {
+            try {
+                const q = query(collection(db, 'blocked-dates'));
+                const querySnapshot = await getDocs(q);
+                
+                blockedDates = [];
+                querySnapshot.forEach((doc) => {
+                    blockedDates.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading blocked dates:', error);
+            }
+        }
+
+        // Generate tooltips for calendar dates
+        function getDateTooltip(date, status) {
+            if (status === 'booked') {
+                // Check if it's blocked by admin
+                const blockedDate = blockedDates.find(blockedDate => 
+                    date.toDateString() === new Date(blockedDate.date.seconds * 1000).toDateString()
+                );
+                
+                if (blockedDate) {
+                    return `Blocked: ${blockedDate.reason}`;
+                }
+                
+                // Check if it's confirmed
+                const confirmedRequest = nycRequests.find(request => 
+                    request.status === 'confirmed' && 
+                    request.dates.some(requestDate => 
+                        date.toDateString() === new Date(requestDate).toDateString()
+                    )
+                );
+                
+                if (confirmedRequest) {
+                    return `Confirmed: ${confirmedRequest.visitors.join(', ')} - ${confirmedRequest.skill}`;
+                }
+            }
+            
+            if (status === 'requested') {
+                const pendingRequest = nycRequests.find(request => 
+                    request.status === 'pending' && 
+                    request.dates.some(requestDate => 
+                        date.toDateString() === new Date(requestDate).toDateString()
+                    )
+                );
+                
+                if (pendingRequest) {
+                    return `Pending: ${pendingRequest.visitors.join(', ')} - ${pendingRequest.skill}`;
+                }
+            }
+            
+            return null;
+        }
+
+        // Update NYC request status
+        window.updateStatus = async function(requestId, newStatus) {
+            try {
+                // Import the updateDoc function and serverTimestamp
+                const { updateDoc, doc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                // Update the document in Firebase
+                const requestRef = doc(db, 'nyc-stay-requests', requestId);
+                await updateDoc(requestRef, {
+                    status: newStatus,
+                    updatedAt: serverTimestamp()
+                });
+                
+                // Update local data
+                const requestIndex = nycRequests.findIndex(r => r.id === requestId);
+                if (requestIndex !== -1) {
+                    nycRequests[requestIndex].status = newStatus;
+                    nycRequests[requestIndex].updatedAt = new Date();
+                }
+                
+                // Refresh the display
+                displayNYCRequests();
+                updateNYCStats();
+                renderAdminCalendar();
+                
+                alert(`Request ${newStatus} successfully!`);
+                
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Error updating status. Please try again.');
+            }
         };
     </script>
 </body>

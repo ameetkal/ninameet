@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stay with Nina & Ameet in NYC</title>
+    <meta name="description" content="Request to stay with Nina and Ameet during their NYC season (Sep 2025 - June 2026)">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* NYC Visit Page Specific Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .nyc-container {
+            min-height: 100vh;
+        }
+        
+        .nyc-header {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 3rem 1rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 20px;
+        }
+        
+        .nyc-header-content {
+            max-width: 64rem;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .nyc-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .nyc-subtitle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            color: #d1fae5;
+            font-size: 1.125rem;
+        }
+        
+        .nyc-subtitle-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nyc-main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .nyc-card {
+            background: white;
+            border: 1px solid #a7f3d0;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .nyc-card-header {
+            padding: 1.5rem 1.5rem 0;
+        }
+        
+        .nyc-card-title {
+            color: #333;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nyc-card-description {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        
+        .nyc-card-content {
+            padding: 1.5rem;
+        }
+        
+        .nyc-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .nyc-form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .nyc-label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        
+        .nyc-input, .nyc-textarea {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .nyc-input:focus, .nyc-textarea:focus {
+            outline: none;
+            border-color: #059669;
+        }
+        
+        .nyc-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .nyc-button {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(5, 150, 105, 0.4);
+        }
+        
+        .nyc-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.6);
+        }
+        
+        .nyc-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .nyc-button-outline {
+            background: white;
+            color: #059669;
+            border: 2px solid #059669;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .nyc-button-outline:hover {
+            background: #059669;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nyc-button-outline.red {
+            border-color: #fca5a5;
+            color: #dc2626;
+        }
+        
+        .nyc-button-outline.red:hover {
+            background: #fef2f2;
+        }
+        
+        .nyc-button-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .nyc-button-full {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+        
+        .nyc-date-selector {
+            width: 100%;
+            justify-content: space-between;
+            border: 1px solid #a7f3d0;
+            text-align: left;
+            background: white;
+            height: 3rem;
+        }
+        
+        .nyc-date-selector:hover {
+            background: #ecfdf5;
+        }
+        
+        .nyc-date-selector-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nyc-calendar-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 1px solid #a7f3d0;
+            border-radius: 0.5rem;
+            background: rgba(236, 253, 245, 0.5);
+        }
+        
+        .nyc-calendar-hint {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Calendar Legend - moved up for relevance */
+        .nyc-calendar-legend {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .nyc-calendar-legend .nyc-legend-items {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nyc-calendar-legend .nyc-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .nyc-calendar-legend .nyc-legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 1px solid #d1d5db;
+        }
+        
+        .nyc-calendar {
+            border: 1px solid #a7f3d0;
+            border-radius: 0.375rem;
+            background: white;
+            padding: 1rem;
+        }
+        
+        .nyc-calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .nyc-calendar-nav {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            color: #059669;
+        }
+        
+        .nyc-calendar-title {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .nyc-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+        }
+        
+        .nyc-calendar-weekday {
+            text-align: center;
+            font-weight: 500;
+            color: #6b7280;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .nyc-calendar-day {
+            text-align: center;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+        
+        .nyc-calendar-day:hover:not(.disabled):not(.booked) {
+            background: #ecfdf5;
+        }
+        
+        .nyc-calendar-day.disabled {
+            color: #d1d5db;
+            cursor: not-allowed;
+        }
+        
+        .nyc-calendar-day.booked {
+            background: #ef4444;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .nyc-calendar-day.selected {
+            background: #059669;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .nyc-selected-dates {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #ecfdf5;
+            border-radius: 0.5rem;
+        }
+        
+        .nyc-selected-dates-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #047857;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nyc-selected-dates-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .nyc-date-tag {
+            padding: 0.25rem 0.5rem;
+            background: #d1fae5;
+            color: #047857;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+        }
+        
+        .nyc-visitors-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .nyc-visitor-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nyc-legend {
+            margin-top: 2rem;
+        }
+        
+        .nyc-legend-content {
+            padding: 1rem;
+        }
+        
+        .nyc-legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+        
+        .nyc-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nyc-legend-color {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 0.25rem;
+        }
+        
+        .nyc-legend-color.selected { background: #059669; }
+        .nyc-legend-color.booked { background: #ef4444; }
+        .nyc-legend-color.available { 
+            background: #e5e7eb; 
+            border: 1px solid #d1d5db;
+        }
+        
+        @media (max-width: 768px) {
+            .nyc-title {
+                font-size: 2rem;
+            }
+            
+            .nyc-subtitle {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nyc-main {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nyc-container">
+        <!-- Header -->
+        <div class="nyc-header">
+            <div class="nyc-header-content">
+                <h1 class="nyc-title">Stay with Nina & Ameet in NYC</h1>
+                <div class="nyc-subtitle">
+                    <div class="nyc-subtitle-item">
+                        <span>📅</span>
+                        <span>Sep 2025 - June 2026</span>
+                    </div>
+                    <div class="nyc-subtitle-item">
+                        <span>📍</span>
+                        <span>Near Columbia University</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nyc-main">
+            <!-- Introduction -->
+            <div class="nyc-card">
+                <div class="nyc-card-content">
+                    <p class="nyc-card-description" style="font-size: 1.125rem; line-height: 1.75; color: #374151;">
+                        We're excited for friends to stay with us throughout our season in NYC! We'll be living in a
+                        3-bedroom apartment near Columbia University. We don't plan to "host" in the traditional sense, we'd rather coexist -
+                        you'll have your own set of keys, space to work, cook, and do as you please around the city. Our only ask is that you teach us a skill while you stay with us. Teach us a special recipe, provide a swimming lesson, show us how to thrift, etc. Pick your dates below and we'll get back to you to confirm.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Request Form -->
+            <div class="nyc-card">
+                <div class="nyc-card-header">
+                    <h2 class="nyc-card-title">
+                        <span>👥</span>
+                        Request Details
+                    </h2>
+                    <p class="nyc-card-description">Tell us about your visit and what you'd like to teach us!</p>
+                </div>
+                <div class="nyc-card-content">
+                    <form id="nycForm" class="nyc-form">
+                        <!-- Date Selector -->
+                        <div class="nyc-form-group">
+                            <label class="nyc-label">Select your dates</label>
+                            <button type="button" id="dateSelector" class="nyc-button nyc-date-selector">
+                                <span class="nyc-date-selector-content">
+                                    <span>📅</span>
+                                    <span id="dateSelectorText">Select your dates</span>
+                                </span>
+                                <span id="dateSelectorIcon">▼</span>
+                            </button>
+
+                            <div id="calendarContainer" class="nyc-calendar-container" style="display: none;">
+                                <p class="nyc-calendar-hint">
+                                    Choose your preferred dates. Red dates are already booked.
+                                </p>
+                                <div class="nyc-calendar">
+                                    <div class="nyc-calendar-header">
+                                        <button type="button" class="nyc-calendar-nav" id="prevMonth">‹</button>
+                                        <div class="nyc-calendar-title" id="currentMonth">October 2025</div>
+                                        <button type="button" class="nyc-calendar-nav" id="nextMonth">›</button>
+                                    </div>
+                                    <div class="nyc-calendar-grid" id="calendarGrid">
+                                        <!-- Calendar will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="selectedDates" class="nyc-selected-dates" style="display: none;">
+                                <p class="nyc-selected-dates-title">Selected dates:</p>
+                                <div class="nyc-selected-dates-list" id="selectedDatesList">
+                                    <!-- Selected dates will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Calendar Legend - moved up for relevance -->
+                            <div class="nyc-calendar-legend">
+                                <div class="nyc-legend-items">
+                                    <div class="nyc-legend-item">
+                                        <div class="nyc-legend-color available"></div>
+                                        <span>Available</span>
+                                    </div>
+                                    <div class="nyc-legend-item">
+                                        <div class="nyc-legend-color requested"></div>
+                                        <span>Requested</span>
+                                    </div>
+                                    <div class="nyc-legend-item">
+                                        <div class="nyc-legend-color booked"></div>
+                                        <span>Booked</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visitors -->
+                        <div class="nyc-form-group">
+                            <label class="nyc-label">Who's visiting? (Max 4 people)</label>
+                            <div id="visitorsContainer" class="nyc-visitors-container">
+                                <div class="nyc-visitor-row">
+                                    <input type="text" placeholder="Visitor 1 name" class="nyc-input visitor-input" required>
+                                </div>
+                            </div>
+                            <button type="button" id="addVisitor" class="nyc-button nyc-button-outline nyc-button-sm">
+                                Add Another Person
+                            </button>
+                        </div>
+
+                        <!-- Skill -->
+                        <div class="nyc-form-group">
+                            <label class="nyc-label">
+                                <span>🎓</span>
+                                What skill will you teach us?
+                            </label>
+                            <textarea 
+                                id="skill" 
+                                placeholder="e.g., cooking a specific dish, playing guitar, photography techniques, language lessons, etc."
+                                class="nyc-textarea" 
+                                required
+                            ></textarea>
+                        </div>
+
+                        <!-- Additional Info -->
+                        <div class="nyc-form-group">
+                            <label class="nyc-label">Additional information (optional)</label>
+                            <textarea 
+                                id="additionalInfo" 
+                                placeholder="Any other details about your visit, dietary restrictions, etc."
+                                class="nyc-textarea"
+                            ></textarea>
+                        </div>
+
+                        <button type="submit" id="submitButton" class="nyc-button nyc-button-full" disabled>
+                            Submit Stay Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB108IDQksvWLhANDsTm04lVl3fvjlULWY",
+            authDomain: "ninameet-1eb2e.firebaseapp.com",
+            projectId: "ninameet-1eb2e",
+            storageBucket: "ninameet-1eb2e.firebasestorage.app",
+            messagingSenderId: "819954601528",
+            appId: "1:819954601528:web:bcfdfba23fb7fa119020cd"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // NYC Visit Page JavaScript
+        class NYCCalendar {
+            constructor() {
+                this.currentDate = new Date();
+                this.selectedDates = [];
+                this.bookedDates = [];
+                this.blockedDates = [];
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.loadBlockedDates();
+                this.renderCalendar();
+                this.updateFormState();
+            }
+
+            setupEventListeners() {
+                document.getElementById('dateSelector').addEventListener('click', () => this.toggleCalendar());
+                document.getElementById('prevMonth').addEventListener('click', () => this.previousMonth());
+                document.getElementById('nextMonth').addEventListener('click', () => this.nextMonth());
+                document.getElementById('addVisitor').addEventListener('click', () => this.addVisitor());
+                document.getElementById('nycForm').addEventListener('submit', (e) => this.handleSubmit(e));
+            }
+
+            toggleCalendar() {
+                const container = document.getElementById('calendarContainer');
+                const icon = document.getElementById('dateSelectorIcon');
+                
+                if (container.style.display === 'none') {
+                    container.style.display = 'block';
+                    icon.textContent = '▲';
+                } else {
+                    container.style.display = 'none';
+                    icon.textContent = '▼';
+                }
+            }
+
+            previousMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+                this.renderCalendar();
+            }
+
+            nextMonth() {
+                this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+                this.renderCalendar();
+            }
+
+            renderCalendar() {
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                const currentMonth = this.currentDate.getMonth();
+                const currentYear = this.currentDate.getFullYear();
+                
+                document.getElementById('currentMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+                
+                const firstDay = new Date(currentYear, currentMonth, 1);
+                const lastDay = new Date(currentYear, currentMonth + 1, 0);
+                const startDate = new Date(firstDay);
+                startDate.setDate(startDate.getDate() - firstDay.getDay());
+                
+                const grid = document.getElementById('calendarGrid');
+                grid.innerHTML = '';
+                
+                // Add weekday headers
+                ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'nyc-calendar-weekday';
+                    dayHeader.textContent = day;
+                    grid.appendChild(dayHeader);
+                });
+                
+                // Add calendar days
+                for (let i = 0; i < 42; i++) {
+                    const date = new Date(startDate);
+                    date.setDate(startDate.getDate() + i);
+                    
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'nyc-calendar-day';
+                    dayElement.textContent = date.getDate();
+                    
+                    if (date.getMonth() !== currentMonth) {
+                        dayElement.style.visibility = 'hidden';
+                    } else {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        if (date < today) {
+                            dayElement.classList.add('disabled');
+                        } else if (this.isBooked(date)) {
+                            dayElement.classList.add('booked');
+                        } else if (this.isSelected(date)) {
+                            dayElement.classList.add('selected');
+                        }
+                        
+                        dayElement.addEventListener('click', () => this.toggleDate(date));
+                    }
+                    
+                    grid.appendChild(dayElement);
+                }
+            }
+
+            isBooked(date) {
+                return this.bookedDates.some(bookedDate => 
+                    date.toDateString() === bookedDate.toDateString()
+                ) || this.blockedDates.some(blockedDate => 
+                    date.toDateString() === blockedDate.toDateString()
+                );
+            }
+
+            isSelected(date) {
+                return this.selectedDates.some(selectedDate => 
+                    date.toDateString() === selectedDate.toDateString()
+                );
+            }
+
+            toggleDate(date) {
+                if (this.isBooked(date)) return;
+                
+                const index = this.selectedDates.findIndex(selectedDate => 
+                    date.toDateString() === selectedDate.toDateString()
+                );
+                
+                if (index > -1) {
+                    this.selectedDates.splice(index, 1);
+                } else {
+                    this.selectedDates.push(new Date(date));
+                }
+                
+                this.renderCalendar();
+                this.updateFormState();
+                this.updateSelectedDatesDisplay();
+            }
+
+            updateSelectedDatesDisplay() {
+                const container = document.getElementById('selectedDates');
+                const list = document.getElementById('selectedDatesList');
+                const selectorText = document.getElementById('dateSelectorText');
+                
+                if (this.selectedDates.length === 0) {
+                    container.style.display = 'none';
+                    selectorText.textContent = 'Select your dates';
+                } else {
+                    container.style.display = 'block';
+                    selectorText.textContent = `${this.selectedDates.length} date${this.selectedDates.length > 1 ? 's' : ''} selected`;
+                    
+                    list.innerHTML = '';
+                    this.selectedDates.forEach(date => {
+                        const tag = document.createElement('span');
+                        tag.className = 'nyc-date-tag';
+                        tag.textContent = this.formatDate(date);
+                        list.appendChild(tag);
+                    });
+                }
+            }
+
+            formatDate(date) {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+            }
+
+            addVisitor() {
+                const container = document.getElementById('visitorsContainer');
+                const visitorCount = container.children.length;
+                
+                if (visitorCount < 4) {
+                    const visitorRow = document.createElement('div');
+                    visitorRow.className = 'nyc-visitor-row';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = `Visitor ${visitorCount + 1} name`;
+                    input.className = 'nyc-input visitor-input';
+                    input.required = true;
+                    
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.className = 'nyc-button nyc-button-outline red nyc-button-sm';
+                    removeButton.textContent = 'Remove';
+                    removeButton.addEventListener('click', () => this.removeVisitor(visitorRow));
+                    
+                    visitorRow.appendChild(input);
+                    visitorRow.appendChild(removeButton);
+                    container.appendChild(visitorRow);
+                    
+                    this.updateFormState();
+                }
+                
+                if (visitorCount + 1 >= 4) {
+                    document.getElementById('addVisitor').style.display = 'none';
+                }
+            }
+
+            removeVisitor(row) {
+                row.remove();
+                document.getElementById('addVisitor').style.display = 'block';
+                this.updateFormState();
+            }
+
+            updateFormState() {
+                const submitButton = document.getElementById('submitButton');
+                const skill = document.getElementById('skill').value.trim();
+                const visitors = Array.from(document.querySelectorAll('.visitor-input')).map(input => input.value.trim());
+                const hasValidVisitors = visitors.some(v => v.length > 0);
+                
+                submitButton.disabled = this.selectedDates.length === 0 || !skill || !hasValidVisitors;
+            }
+
+            async loadBlockedDates() {
+                try {
+                    const { collection, getDocs, query } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                    const q = query(collection(db, 'blocked-dates'));
+                    const querySnapshot = await getDocs(q);
+                    
+                    this.blockedDates = [];
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (data.date && data.date.seconds) {
+                            this.blockedDates.push(new Date(data.date.seconds * 1000));
+                        }
+                    });
+                    
+                    this.renderCalendar();
+                } catch (error) {
+                    console.error('Error loading blocked dates:', error);
+                }
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                
+                const submitButton = document.getElementById('submitButton');
+                const originalText = submitButton.textContent;
+                submitButton.textContent = 'Submitting...';
+                submitButton.disabled = true;
+                
+                try {
+                    const formData = {
+                        dates: this.selectedDates.map(date => date.getTime()),
+                        visitors: Array.from(document.querySelectorAll('.visitor-input')).map(input => input.value.trim()).filter(v => v),
+                        skill: document.getElementById('skill').value.trim(),
+                        additionalInfo: document.getElementById('additionalInfo').value.trim(),
+                        status: 'pending',
+                        timestamp: serverTimestamp()
+                    };
+                    
+                    // Submit to Firebase
+                    await addDoc(collection(db, 'nyc-stay-requests'), formData);
+                    
+                    alert("Request submitted! We'll get back to you soon.");
+                    
+                    // Reset form
+                    this.selectedDates = [];
+                    this.renderCalendar();
+                    this.updateSelectedDatesDisplay();
+                    document.getElementById('nycForm').reset();
+                    document.getElementById('visitorsContainer').innerHTML = '<div class="nyc-visitor-row"><input type="text" placeholder="Visitor 1 name" class="nyc-input visitor-input" required></div>';
+                    document.getElementById('addVisitor').style.display = 'block';
+                    this.updateFormState();
+                    
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    alert('There was an error submitting your request. Please try again.');
+                } finally {
+                    submitButton.textContent = originalText;
+                    submitButton.disabled = false;
+                }
+            }
+        }
+
+        // Initialize the calendar when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new NYCCalendar();
+        });
+    </script>
+</body>
+</html>
