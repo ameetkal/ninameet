@@ -24,9 +24,11 @@ body {
 /* Hero Section with Photo Layout */
 .hero-section {
     display: flex;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
     gap: 40px;
     margin-bottom: 40px;
+    min-height: 80vh;
 }
 
 .hero {
@@ -137,6 +139,28 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     position: relative;
     cursor: pointer;
+}
+
+/* Homepage Photo Specific Styles */
+.hero-section .photo-container {
+    width: auto;
+    max-width: 450px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+.hero-section .couple-photo {
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+    object-fit: contain;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .couple-image {
@@ -399,6 +423,27 @@ body {
         flex-direction: column;
         gap: 20px;
     }
+    
+    /* Homepage photo responsive sizing */
+    .hero-section .photo-container {
+        max-width: 350px;
+    }
+    
+    .hero-section .couple-photo {
+        max-height: 450px;
+        }
+}
+
+@media (max-width: 480px) {
+    /* Homepage photo mobile sizing */
+    .hero-section .photo-container {
+        max-width: 280px;
+    }
+    
+    .hero-section .couple-photo {
+        max-height: 350px;
+    }
+}
     
     .countdown {
         gap: 15px;
