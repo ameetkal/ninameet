@@ -35,15 +35,78 @@
         }
         .response-item {
             border: 1px solid #e5e5e5;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .response-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
         }
         .response-item.planning {
             border-left: 4px solid #059669;
         }
         .response-item.cant-make-it {
             border-left: 4px solid #dc2626;
+        }
+        
+        .response-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9fafb;
+        }
+        
+        .response-header:hover {
+            background: #f3f4f6;
+        }
+        
+        .response-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 15px;
+        }
+        
+        .response-content.expanded {
+            max-height: 500px;
+            padding: 15px;
+        }
+        
+        .response-arrow {
+            transition: transform 0.3s ease;
+            font-size: 18px;
+            color: #6b7280;
+        }
+        
+        .response-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .response-info {
+            text-align: left;
+        }
+        
+        .response-info h3 {
+            margin: 0 0 8px 0;
+            color: #111827;
+            font-size: 16px;
+        }
+        
+        .response-info p {
+            margin: 0 0 6px 0;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .response-info small {
+            color: #6b7280;
+            font-size: 12px;
         }
         button {
             background: #059669;
@@ -57,6 +120,227 @@
         button:hover {
             background: #047857;
         }
+        
+        /* Request Action Button Styles */
+        .request-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .btn-confirm {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-confirm:hover:not(:disabled) {
+            background: #047857;
+            transform: translateY(-1px);
+        }
+        
+        .btn-decline {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-decline:hover:not(:disabled) {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+        
+        .btn-disabled {
+            background: #9ca3af;
+            color: #6b7280;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: not-allowed;
+            font-weight: 500;
+            opacity: 0.6;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .tab-button {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .response-item,
+            .nyc-request-item {
+                margin-bottom: 8px;
+            }
+            
+            .response-header,
+            .nyc-request-header {
+                padding: 12px;
+            }
+            
+            .response-info h3,
+            .nyc-request-info h3 {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+            
+            .response-info p,
+            .nyc-request-info p {
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+            
+            .response-content,
+            .nyc-request-content {
+                padding: 12px;
+            }
+            
+            .response-content.expanded,
+            .nyc-request-content.expanded {
+                padding: 12px;
+            }
+            
+            .request-actions {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+            
+            .btn-confirm,
+            .btn-decline,
+            .btn-disabled {
+                width: 100%;
+                max-width: 200px;
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .controls {
+                padding: 15px;
+            }
+            
+            .controls button {
+                width: 100%;
+                margin-bottom: 8px;
+                margin-right: 0;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .responses {
+                padding: 15px;
+            }
+            
+            .calendar-legend {
+                padding: 10px;
+            }
+            
+            .legend-items {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 12px;
+                margin: 10px 5px;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .tab-button {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .response-header,
+            .nyc-request-header {
+                padding: 10px;
+            }
+            
+            .response-content,
+            .nyc-request-content {
+                padding: 10px;
+            }
+            
+            .response-content.expanded,
+            .nyc-request-content.expanded {
+                padding: 10px;
+            }
+            
+            .btn-confirm,
+            .btn-decline,
+            .btn-disabled {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .calendar-grid {
+                gap: 2px;
+            }
+            
+            .calendar-day {
+                padding: 8px 4px;
+                font-size: 0.8rem;
+            }
+        }
+        
         .loading {
             text-align: center;
             padding: 20px;
@@ -233,22 +517,81 @@
         /* NYC Request Styles */
         .nyc-request-item {
             border: 1px solid #e5e5e5;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .nyc-request-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        .nyc-request-item.pending {
+            border-left: 4px solid #f59e0b;
+        }
+        .nyc-request-item.confirmed {
             border-left: 4px solid #059669;
         }
-
-        .nyc-request-item.pending {
-            border-left-color: #f59e0b;
-        }
-
-        .nyc-request-item.confirmed {
-            border-left-color: #059669;
-        }
-
         .nyc-request-item.declined {
-            border-left-color: #dc2626;
+            border-left: 4px solid #dc2626;
+        }
+        
+        .nyc-request-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9fafb;
+        }
+        
+        .nyc-request-header:hover {
+            background: #f3f4f6;
+        }
+        
+        .nyc-request-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 15px;
+        }
+        
+        .nyc-request-content.expanded {
+            max-height: 500px;
+            padding: 15px;
+        }
+        
+        .nyc-request-arrow {
+            transition: transform 0.3s ease;
+            font-size: 18px;
+            color: #6b7280;
+        }
+        
+        .nyc-request-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .nyc-request-info {
+            text-align: left;
+        }
+        
+        .nyc-request-info h3 {
+            margin: 0 0 8px 0;
+            color: #111827;
+            font-size: 16px;
+        }
+        
+        .nyc-request-info p {
+            margin: 0 0 6px 0;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .nyc-request-info small {
+            color: #6b7280;
+            font-size: 12px;
         }
 
         .status-badge {
@@ -375,8 +718,7 @@
 
     <div id="adminDashboard" style="display: none;">
         <div class="header">
-            <h1>Nina & Ameet Admin Dashboard</h1>
-            <p>Manage Wedding RSVPs and NYC Stay Requests</p>
+            <h1>Ninameet Admin Dashboard</h1>
         </div>
 
         <!-- Tab Navigation -->
@@ -404,8 +746,7 @@
 
             <div class="controls">
                 <button onclick="loadResponses()">🔄 Refresh Data</button>
-                <button onclick="exportToCSV()">📊 Export to CSV</button>
-                <button onclick="exportToJSON()">📋 Export to JSON</button>
+                                        <button onclick="exportToCSV()">📊 Export to CSV</button>
             </div>
 
             <div class="responses">
@@ -435,8 +776,7 @@
 
             <div class="controls">
                 <button onclick="loadNYCRequests()">🔄 Refresh NYC Data</button>
-                <button onclick="exportNYCToCSV()">📊 Export NYC to CSV</button>
-                <button onclick="exportNYCToJSON()">📋 Export NYC to JSON</button>
+                                        <button onclick="exportNYCToCSV()">📊 Export NYC to CSV</button>
             </div>
 
             <div class="responses">
@@ -535,7 +875,7 @@
                 return;
             }
 
-            const html = responses.map(response => {
+            const html = responses.map((response, index) => {
                 const date = response.timestamp ? 
                     new Date(response.timestamp.seconds * 1000).toLocaleDateString() : 
                     new Date(response.createdAt).toLocaleDateString();
@@ -543,12 +883,20 @@
                 const responseClass = response.response.includes('Planning') ? 'planning' : 'cant-make-it';
                 
                 return `
-                    <div class="response-item ${responseClass}">
-                        <h3>${response.fullName}</h3>
-                        <p><strong>Email:</strong> ${response.email}</p>
-                        <p><strong>Response:</strong> ${response.response}</p>
-                        ${response.question ? `<p><strong>Wisdom:</strong> ${response.question}</p>` : ''}
-                        <p><small><strong>Date:</strong> ${date}</small></p>
+                    <div class="response-item ${responseClass}" onclick="toggleResponse(${index})">
+                        <div class="response-header">
+                            <div class="response-info">
+                                <h3>${response.fullName}</h3>
+                                <p><strong>Response:</strong> ${response.response}</p>
+                                <p><small><strong>Date:</strong> ${date}</small></p>
+                            </div>
+                            <div class="response-arrow">▼</div>
+                        </div>
+                        <div class="response-content" id="response-content-${index}">
+                            <p><strong>Email:</strong> ${response.email}</p>
+                            ${response.question ? `<p><strong>Wisdom:</strong> ${response.question}</p>` : ''}
+                            <p><strong>Full Response:</strong> ${response.response}</p>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -599,21 +947,7 @@
             window.URL.revokeObjectURL(url);
         };
 
-        window.exportToJSON = function() {
-            if (responses.length === 0) {
-                alert('No data to export. Please refresh data first.');
-                return;
-            }
 
-            const jsonContent = JSON.stringify(responses, null, 2);
-            const blob = new Blob([jsonContent], { type: 'application/json' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `wedding-responses-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        };
 
         // Password protection
         function checkPassword() {
@@ -700,7 +1034,7 @@
                 return;
             }
 
-            const html = nycRequests.map(request => {
+            const html = nycRequests.map((request, index) => {
                 const date = request.timestamp ? 
                     new Date(request.timestamp.seconds * 1000).toLocaleDateString() : 
                     new Date().toLocaleDateString();
@@ -712,16 +1046,31 @@
                 const statusClass = `status-${request.status}`;
                 
                 return `
-                    <div class="nyc-request-item ${request.status}">
-                        <h3>${request.visitors.join(', ')}</h3>
-                        <p><strong>Dates:</strong> ${dates}</p>
-                        <p><strong>Skill:</strong> ${request.skill}</p>
-                        ${request.additionalInfo ? `<p><strong>Additional Info:</strong> ${request.additionalInfo}</p>` : ''}
-                        <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${request.status}</span></p>
-                        <p><small><strong>Submitted:</strong> ${date}</small></p>
-                        <div class="request-actions">
-                            <button onclick="updateStatus('${request.id}', 'confirmed')" ${request.status === 'confirmed' ? 'disabled' : ''}>✅ Confirm</button>
-                            <button onclick="updateStatus('${request.id}', 'declined')" ${request.status === 'declined' ? 'disabled' : ''}>❌ Decline</button>
+                    <div class="nyc-request-item ${request.status}" onclick="toggleNYCRequest(${index})">
+                        <div class="nyc-request-header">
+                            <div class="nyc-request-info">
+                                <h3>${request.visitors.join(', ')}</h3>
+                                <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${request.status}</span></p>
+                            </div>
+                            <div class="nyc-request-arrow">▼</div>
+                        </div>
+                        <div class="nyc-request-content" id="nyc-request-content-${index}">
+                            <p><strong>Dates:</strong> ${dates}</p>
+                            <p><strong>Skill:</strong> ${request.skill}</p>
+                            <p><small><strong>Submitted:</strong> ${date}</small></p>
+                            ${request.additionalInfo ? `<p><strong>Additional Info:</strong> ${request.additionalInfo}</p>` : ''}
+                            <div class="request-actions" onclick="event.stopPropagation()">
+                                <button onclick="updateStatus('${request.id}', 'confirmed')" 
+                                        ${request.status === 'confirmed' ? 'disabled' : ''} 
+                                        class="${request.status === 'confirmed' ? 'btn-disabled' : 'btn-confirm'}">
+                                    ${request.status === 'confirmed' ? '✅ Confirmed' : '✅ Confirm'}
+                                </button>
+                                <button onclick="updateStatus('${request.id}', 'declined')" 
+                                        ${request.status === 'declined' ? 'disabled' : ''} 
+                                        class="${request.status === 'declined' ? 'btn-disabled' : 'btn-decline'}">
+                                    ${request.status === 'declined' ? '❌ Declined' : '❌ Decline'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -779,21 +1128,7 @@
             window.URL.revokeObjectURL(url);
         };
 
-        window.exportNYCToJSON = function() {
-            if (nycRequests.length === 0) {
-                alert('No NYC data to export. Please refresh data first.');
-                return;
-            }
 
-            const jsonContent = JSON.stringify(nycRequests, null, 2);
-            const blob = new Blob([jsonContent], { type: 'application/json' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `nyc-stay-requests-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        };
 
         // Date Management Functions
         window.previousMonth = function() {
@@ -1035,6 +1370,33 @@
             } catch (error) {
                 console.error('Error updating status:', error);
                 alert('Error updating status. Please try again.');
+            }
+        };
+
+        // Accordion toggle functions
+        window.toggleResponse = function(index) {
+            const content = document.getElementById(`response-content-${index}`);
+            const arrow = content.previousElementSibling.querySelector('.response-arrow');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                arrow.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                arrow.classList.add('expanded');
+            }
+        };
+
+        window.toggleNYCRequest = function(index) {
+            const content = document.getElementById(`nyc-request-content-${index}`);
+            const arrow = content.previousElementSibling.querySelector('.nyc-request-arrow');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                arrow.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                arrow.classList.add('expanded');
             }
         };
     </script>
