@@ -364,6 +364,9 @@
             cursor: pointer;
             border-radius: 0.25rem;
             transition: background-color 0.2s;
+            background: transparent; /* Explicitly reset background */
+            color: #333; /* Explicitly reset text color */
+            font-weight: normal; /* Explicitly reset font weight */
         }
         
         .nyc-calendar-day:hover:not(.disabled):not(.booked):not(.selected) {
@@ -417,6 +420,15 @@
             color: white;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Explicit reset for non-selected dates */
+        .nyc-calendar-day:not(.selected):not(.booked):not(.requested):not(.disabled) {
+            background: transparent;
+            color: #333;
+            font-weight: normal;
+            box-shadow: none;
+            border: none;
         }
         
         .nyc-selected-dates {
