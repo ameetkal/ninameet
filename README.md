@@ -1,4 +1,4 @@
-# Nina & Ameet - Save the Date Website
+# Nina & Ameet Website
 
 A beautiful, responsive save the date website for Nina and Ameet's wedding celebration in Marseille, France.
 
