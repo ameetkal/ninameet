@@ -151,7 +151,7 @@ body {
     justify-content: center;
     margin: 0 auto;
     padding-top: 60px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
 }
 
 .hero-section .couple-photo {
@@ -161,6 +161,20 @@ body {
     object-fit: contain;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.info-text {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #444;
+    margin-top: 0;
+    padding: 0 20px;
+    line-height: 1.5;
+    font-style: italic;
+    opacity: 0.9;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .couple-image {
@@ -489,7 +503,6 @@ body {
     .purpose {
         padding: 40px 20px;
     }
-}
 
 @media (max-width: 480px) {
     .hero {
@@ -519,6 +532,14 @@ body {
     
     .countdown-label {
         font-size: 0.8rem;
+    }
+    
+    .hero-section .photo-container {
+        max-width: 280px;
+    }
+    
+    .hero-section .couple-photo {
+        max-height: 350px;
     }
 }
 
