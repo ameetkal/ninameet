@@ -124,6 +124,13 @@
             display: block;
         }
         
+        /* Required field indicators */
+        .nyc-label.required::after {
+            content: " *";
+            color: #dc2626;
+            font-weight: bold;
+        }
+        
         .nyc-input, .nyc-textarea {
             border: 2px solid #e1e5e9;
             border-radius: 10px;
@@ -417,6 +424,62 @@
             border: 1px solid #d1d5db;
         }
         
+        /* Success Message Styles */
+        .nyc-success-message {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .nyc-success-message h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #059669;
+            margin-bottom: 1rem;
+        }
+        
+        .nyc-success-message p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Error Message Styles */
+        .nyc-error-message {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .nyc-error-message h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #dc2626;
+            margin-bottom: 1rem;
+        }
+        
+        .nyc-error-message p {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
         @media (max-width: 768px) {
             .nyc-title {
                 font-size: 2rem;
@@ -476,7 +539,7 @@
                     <form id="nycForm" class="nyc-form">
                         <!-- Date Selector -->
                         <div class="nyc-form-group">
-                            <label class="nyc-label">Select your dates</label>
+                            <label class="nyc-label required">Select your dates</label>
                             <button type="button" id="dateSelector" class="nyc-button nyc-date-selector">
                                 <span class="nyc-date-selector-content">
                                     <span>📅</span>
@@ -487,7 +550,7 @@
 
                             <div id="calendarContainer" class="nyc-calendar-container" style="display: none;">
                                 <p class="nyc-calendar-hint">
-                                    Choose your preferred dates. Red dates are already booked.
+                                    Choose your preferred dates. Yellow dates have been requested but not confirmed. Red dates are already booked.
                                 </p>
                                 <div class="nyc-calendar">
                                     <div class="nyc-calendar-header">
@@ -529,7 +592,7 @@
 
                         <!-- Visitors -->
                         <div class="nyc-form-group">
-                            <label class="nyc-label">Who's visiting? (Max 4 people in 2 rooms)</label>
+                            <label class="nyc-label required">Who's visiting? (Max 4 people in 2 rooms)</label>
                             <div id="visitorsContainer" class="nyc-visitors-container">
                                 <div class="nyc-visitor-row">
                                     <input type="text" placeholder="Visitor 1 name" class="nyc-input visitor-input" required>
@@ -542,7 +605,7 @@
 
                         <!-- Skill -->
                         <div class="nyc-form-group">
-                            <label class="nyc-label">
+                            <label class="nyc-label required">
                                 <span>🎓</span>
                                 What skill will you teach us?
                             </label>
@@ -601,15 +664,16 @@
                 this.currentDate = new Date();
                 this.selectedDates = [];
                 this.bookedDates = [];
-                this.blockedDates = [];
+                this.pendingDates = [];
                 
                 this.init();
             }
 
             init() {
                 this.setupEventListeners();
-                this.loadBlockedDates();
+                this.loadCalendarDates();
                 this.renderCalendar();
+                
                 this.updateFormState();
             }
 
@@ -619,6 +683,15 @@
                 document.getElementById('nextMonth').addEventListener('click', () => this.nextMonth());
                 document.getElementById('addVisitor').addEventListener('click', () => this.addVisitor());
                 document.getElementById('nycForm').addEventListener('submit', (e) => this.handleSubmit(e));
+                
+                // Add input event listeners for form validation
+                document.getElementById('skill').addEventListener('input', () => this.updateFormState());
+                
+                // Add event listeners to existing visitor inputs
+                const visitorInputs = document.querySelectorAll('.visitor-input');
+                visitorInputs.forEach(input => {
+                    input.addEventListener('input', () => this.updateFormState());
+                });
             }
 
             toggleCalendar() {
@@ -637,11 +710,15 @@
             previousMonth() {
                 this.currentDate.setMonth(this.currentDate.getMonth() - 1);
                 this.renderCalendar();
+                // Re-attach event listeners after month change
+                this.attachCalendarEventListeners();
             }
 
             nextMonth() {
                 this.currentDate.setMonth(this.currentDate.getMonth() + 1);
                 this.renderCalendar();
+                // Re-attach event listeners after month change
+                this.attachCalendarEventListeners();
             }
 
             renderCalendar() {
@@ -686,10 +763,14 @@
                             dayElement.classList.add('disabled');
                         } else if (this.isBooked(date)) {
                             dayElement.classList.add('booked');
+                        } else if (this.isPending(date)) {
+                            dayElement.classList.add('requested');
                         } else if (this.isSelected(date)) {
                             dayElement.classList.add('selected');
                         }
                         
+                        // Store the date as a data attribute for easier access
+                        dayElement.setAttribute('data-date', date.toISOString());
                         dayElement.addEventListener('click', () => this.toggleDate(date));
                     }
                     
@@ -697,11 +778,35 @@
                 }
             }
 
+            attachCalendarEventListeners() {
+                // Re-attach click event listeners to calendar days
+                const calendarDays = document.querySelectorAll('.nyc-calendar-day:not(.disabled)');
+                
+                calendarDays.forEach(dayElement => {
+                    // Remove existing listeners to prevent duplicates
+                    dayElement.replaceWith(dayElement.cloneNode(true));
+                });
+                
+                // Re-attach listeners to the new elements
+                const newCalendarDays = document.querySelectorAll('.nyc-calendar-day:not(.disabled)');
+                newCalendarDays.forEach(dayElement => {
+                    const dateString = dayElement.getAttribute('data-date');
+                    if (dateString) {
+                        const date = new Date(dateString);
+                        dayElement.addEventListener('click', () => this.toggleDate(date));
+                    }
+                });
+            }
+
             isBooked(date) {
                 return this.bookedDates.some(bookedDate => 
                     date.toDateString() === bookedDate.toDateString()
-                ) || this.blockedDates.some(blockedDate => 
-                    date.toDateString() === blockedDate.toDateString()
+                );
+            }
+
+            isPending(date) {
+                return this.pendingDates.some(pendingDate => 
+                    date.toDateString() === pendingDate.toDateString()
                 );
             }
 
@@ -712,7 +817,7 @@
             }
 
             toggleDate(date) {
-                if (this.isBooked(date)) return;
+                if (this.isBooked(date) || this.isPending(date)) return;
                 
                 const index = this.selectedDates.findIndex(selectedDate => 
                     date.toDateString() === selectedDate.toDateString()
@@ -724,9 +829,13 @@
                     this.selectedDates.push(new Date(date));
                 }
                 
-                this.renderCalendar();
+                // Update form state immediately after selection change
                 this.updateFormState();
                 this.updateSelectedDatesDisplay();
+                
+                // Only re-render calendar if we need to show selection state changes
+                // This prevents losing event listeners unnecessarily
+                this.updateCalendarSelectionState();
             }
 
             updateSelectedDatesDisplay() {
@@ -749,6 +858,29 @@
                         list.appendChild(tag);
                     });
                 }
+            }
+
+            updateCalendarSelectionState() {
+                // Update only the visual state of calendar days without re-rendering
+                const calendarDays = document.querySelectorAll('.nyc-calendar-day');
+                
+                calendarDays.forEach(dayElement => {
+                    // Remove existing selection classes
+                    dayElement.classList.remove('selected');
+                    
+                    // Get the date from the day element
+                    const dayText = dayElement.textContent;
+                    const currentMonth = this.currentDate.getMonth();
+                    const currentYear = this.currentDate.getFullYear();
+                    
+                    // Find the date this element represents
+                    const date = new Date(currentYear, currentMonth, parseInt(dayText));
+                    
+                    // Check if this date is selected and update visual state
+                    if (this.isSelected(date)) {
+                        dayElement.classList.add('selected');
+                    }
+                });
             }
 
             formatDate(date) {
@@ -780,6 +912,9 @@
                     visitorRow.appendChild(removeButton);
                     container.appendChild(visitorRow);
                     
+                    // Add input event listener to new visitor input
+                    input.addEventListener('input', () => this.updateFormState());
+                    
                     this.updateFormState();
                 }
                 
@@ -803,23 +938,48 @@
                 submitButton.disabled = this.selectedDates.length === 0 || !skill || !hasValidVisitors;
             }
 
-            async loadBlockedDates() {
+            async loadCalendarDates() {
                 try {
-                    const { collection, getDocs, query } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
-                    const q = query(collection(db, 'blocked-dates'));
-                    const querySnapshot = await getDocs(q);
+                    const { collection, getDocs, query, where } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
                     
-                    this.blockedDates = [];
-                    querySnapshot.forEach((doc) => {
+                    // Fetch admin-blocked dates
+                    const blockedQuery = query(collection(db, 'blocked-dates'));
+                    const blockedSnapshot = await getDocs(blockedQuery);
+                    
+                    // Fetch all stay requests (pending + confirmed)
+                    const requestsQuery = query(collection(db, 'nyc-stay-requests'));
+                    const requestsSnapshot = await getDocs(requestsQuery);
+                    
+                    // Reset arrays
+                    this.bookedDates = [];
+                    this.pendingDates = [];
+                    
+                    // Add admin-blocked dates to booked
+                    blockedSnapshot.forEach((doc) => {
                         const data = doc.data();
                         if (data.date && data.date.seconds) {
-                            this.blockedDates.push(new Date(data.date.seconds * 1000));
+                            this.bookedDates.push(new Date(data.date.seconds * 1000));
+                        }
+                    });
+                    
+                    // Process stay requests
+                    requestsSnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (data.dates && Array.isArray(data.dates)) {
+                            data.dates.forEach(timestamp => {
+                                const date = new Date(timestamp);
+                                if (data.status === 'confirmed') {
+                                    this.bookedDates.push(date);
+                                } else if (data.status === 'pending') {
+                                    this.pendingDates.push(date);
+                                }
+                            });
                         }
                     });
                     
                     this.renderCalendar();
                 } catch (error) {
-                    console.error('Error loading blocked dates:', error);
+                    console.error('Error loading calendar dates:', error);
                 }
             }
 
@@ -844,30 +1004,58 @@
                     // Submit to Firebase
                     await addDoc(collection(db, 'nyc-stay-requests'), formData);
                     
-                    alert("Request submitted! We'll get back to you soon.");
+                    // Show success message instead of form
+                    this.showSuccessMessage();
                     
-                    // Reset form
+                    // Reset form data for next submission
                     this.selectedDates = [];
                     this.renderCalendar();
                     this.updateSelectedDatesDisplay();
-                    document.getElementById('nycForm').reset();
-                    document.getElementById('visitorsContainer').innerHTML = '<div class="nyc-visitor-row"><input type="text" placeholder="Visitor 1 name" class="nyc-input visitor-input" required></div>';
-                    document.getElementById('addVisitor').style.display = 'block';
-                    this.updateFormState();
                     
                 } catch (error) {
                     console.error('Error submitting form:', error);
-                    alert('There was an error submitting your request. Please try again.');
+                    // Show error in the UI instead of generic alert
+                    this.showErrorMessage('There was an error submitting your request. Please try again.');
                 } finally {
                     submitButton.textContent = originalText;
                     submitButton.disabled = false;
                 }
             }
+
+            showSuccessMessage() {
+                const formContainer = document.getElementById('nycForm').parentElement;
+                formContainer.innerHTML = `
+                    <div class="nyc-success-message">
+                        <div class="success-icon">✅</div>
+                        <h3>Request Submitted Successfully!</h3>
+                        <p>Thank you for your request to stay with us in NYC. We'll review your dates and get back to you soon to confirm.</p>
+                        <button type="button" class="nyc-button" onclick="window.location.reload()">
+                            Submit Another Request
+                        </button>
+                    </div>
+                `;
+            }
+
+            showErrorMessage(message) {
+                const formContainer = document.getElementById('nycForm').parentElement;
+                formContainer.innerHTML = `
+                    <div class="nyc-error-message">
+                        <div class="error-icon">❌</div>
+                        <h3>Submission Error</h3>
+                        <p>${message}</p>
+                        <button type="button" class="nyc-button" onclick="window.location.reload()">
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            }
+
+
         }
 
         // Initialize the calendar when the page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new NYCCalendar();
+            window.nycCalendar = new NYCCalendar();
         });
     </script>
 </body>
