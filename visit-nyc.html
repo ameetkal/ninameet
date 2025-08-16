@@ -52,6 +52,19 @@
             letter-spacing: 2px;
         }
         
+        /* Mobile optimization for NYC header */
+        @media (max-width: 768px) {
+            .nyc-title {
+                font-size: 2.5rem;
+                margin-bottom: 16px;
+            }
+            
+            .nyc-header {
+                padding: 2rem 1rem;
+                margin: 1rem;
+            }
+        }
+        
         .nyc-subtitle {
             display: flex;
             align-items: center;
@@ -237,9 +250,21 @@
         /* Fix 1: Prevent calendar bleeding on mobile */
         @media (max-width: 768px) {
             .nyc-calendar-container {
-                max-width: calc(100vw - 2rem);
-                margin: 0 auto;
+                max-width: calc(100vw - 1rem);
+                margin: 0 0.5rem;
                 overflow-x: auto;
+            }
+            
+            .nyc-calendar {
+                padding: 0.75rem;
+            }
+            
+            .nyc-calendar-grid {
+                gap: 0.125rem;
+            }
+            
+            .nyc-calendar-day {
+                padding: 0.375rem;
             }
         }
         
@@ -330,8 +355,30 @@
             transition: background-color 0.2s;
         }
         
-        .nyc-calendar-day:hover:not(.disabled):not(.booked) {
-            background: #ecfdf5;
+        .nyc-calendar-day:hover:not(.disabled):not(.booked):not(.selected) {
+            background: #047857; /* Dark green */
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Mobile-specific date selection behavior */
+        @media (max-width: 768px) {
+            .nyc-calendar-day:hover:not(.disabled):not(.booked) {
+                background: transparent; /* No hover effect on mobile */
+            }
+            
+            .nyc-calendar-day.selected {
+                background: #047857; /* Always dark green when selected */
+                color: white;
+                font-weight: bold;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+                border: 2px solid #065f46;
+            }
+            
+            .nyc-calendar-day:active:not(.disabled):not(.booked) {
+                background: #d1fae5; /* Light green on touch */
+                transform: scale(0.95); /* Subtle press effect */
+            }
         }
         
         .nyc-calendar-day.disabled {
@@ -352,7 +399,7 @@
         }
         
         .nyc-calendar-day.selected {
-            background: #047857;
+            background: #047857; /* Dark green */
             color: white;
             font-weight: bold;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
