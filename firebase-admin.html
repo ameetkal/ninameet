@@ -471,6 +471,8 @@
             background: #3b82f6;
             color: white;
             border-color: #3b82f6;
+            font-weight: bold;
+            box-shadow: 0 0 0 2px #1d4ed8;
         }
 
         .calendar-day.booked {
@@ -490,6 +492,16 @@
             cursor: not-allowed;
         }
 
+        .date-selection-info {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            color: #0369a1;
+        }
+        
         .date-actions {
             display: flex;
             gap: 10px;
@@ -798,10 +810,13 @@
                         <!-- Calendar will be populated by JavaScript -->
                     </div>
                 </div>
-                <div class="date-actions">
-                    <button onclick="blockSelectedDates()">🚫 Block Selected Dates</button>
-                    <button onclick="unblockSelectedDates()">✅ Unblock Selected Dates</button>
-                </div>
+                                        <div class="date-selection-info" id="dateSelectionInfo" style="display: none;">
+                            <p><strong>Selected Dates:</strong> <span id="selectedDatesCount">0</span></p>
+                        </div>
+                        <div class="date-actions">
+                            <button onclick="blockSelectedDates()">🚫 Block Selected Dates</button>
+                            <button onclick="unblockSelectedDates()">✅ Unblock Selected Dates</button>
+                        </div>
                 
                 <!-- Calendar Legend -->
                 <div class="calendar-legend">
@@ -826,7 +841,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, orderBy, query, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Your Firebase configuration (same as main site)
         const firebaseConfig = {
@@ -1197,6 +1212,13 @@
                         }
                     }
                     
+                    // Check if this date is currently selected
+                    if (selectedDates.some(selectedDate => 
+                        date.toDateString() === selectedDate.toDateString()
+                    )) {
+                        dayElement.classList.add('selected');
+                    }
+                    
                     dayElement.addEventListener('click', () => toggleDateSelection(date));
                 }
                 
@@ -1240,7 +1262,20 @@
                 selectedDates.push(date);
             }
             
+            updateSelectionDisplay();
             renderAdminCalendar();
+        }
+
+        function updateSelectionDisplay() {
+            const selectionInfo = document.getElementById('dateSelectionInfo');
+            const selectedCount = document.getElementById('selectedDatesCount');
+            
+            if (selectedDates.length > 0) {
+                selectionInfo.style.display = 'block';
+                selectedCount.textContent = selectedDates.length;
+            } else {
+                selectionInfo.style.display = 'none';
+            }
         }
 
         window.blockSelectedDates = async function() {
@@ -1250,6 +1285,11 @@
             }
 
             try {
+                const blockButton = document.querySelector('button[onclick="blockSelectedDates()"]');
+                const originalText = blockButton.textContent;
+                blockButton.textContent = 'Blocking...';
+                blockButton.disabled = true;
+
                 for (const date of selectedDates) {
                     await addDoc(collection(db, 'blocked-dates'), {
                         date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
@@ -1259,13 +1299,18 @@
                     });
                 }
                 
-                alert(`Blocked ${selectedDates.length} date(s).`);
+                alert(`Successfully blocked ${selectedDates.length} date(s).`);
                 selectedDates = [];
                 loadBlockedDates();
                 renderAdminCalendar();
+                
             } catch (error) {
                 console.error('Error blocking dates:', error);
-                alert('Error blocking dates. Please try again.');
+                alert(`Error blocking dates: ${error.message}. Please try again.`);
+            } finally {
+                const blockButton = document.querySelector('button[onclick="blockSelectedDates()"]');
+                blockButton.textContent = originalText;
+                blockButton.disabled = false;
             }
         };
 
