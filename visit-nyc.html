@@ -234,6 +234,15 @@
             background: rgba(236, 253, 245, 0.5);
         }
         
+        /* Fix 1: Prevent calendar bleeding on mobile */
+        @media (max-width: 768px) {
+            .nyc-calendar-container {
+                max-width: calc(100vw - 2rem);
+                margin: 0 auto;
+                overflow-x: auto;
+            }
+        }
+        
         .nyc-calendar-hint {
             font-size: 0.875rem;
             color: #6b7280;
@@ -343,9 +352,10 @@
         }
         
         .nyc-calendar-day.selected {
-            background: #059669;
+            background: #047857;
             color: white;
             font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .nyc-selected-dates {
@@ -480,20 +490,7 @@
             margin-right: auto;
         }
         
-        @media (max-width: 768px) {
-            .nyc-title {
-                font-size: 2rem;
-            }
-            
-            .nyc-subtitle {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .nyc-main {
-                padding: 1rem;
-            }
-        }
+
     </style>
 </head>
 <body>
