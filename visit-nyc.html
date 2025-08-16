@@ -253,6 +253,7 @@
                 max-width: calc(100vw - 1rem);
                 margin: 0 0.5rem;
                 overflow-x: auto;
+                padding: 1.5rem; /* Extended green backdrop padding */
             }
             
             .nyc-calendar {
@@ -260,7 +261,7 @@
                 min-width: 320px; /* Ensure minimum width for 7 columns */
                 width: 100%;
                 max-width: calc(100vw - 1rem); /* Match container bounds */
-                padding: 0.75rem;
+                padding: 1.25rem; /* Extended white calendar padding */
                 /* Remove: overflow-x: auto; - Single scroll area in green container */
             }
             
@@ -371,23 +372,25 @@
             font-weight: bold;
         }
         
-        /* Mobile-specific date selection behavior */
+        /* Mobile-specific enhancements */
         @media (max-width: 768px) {
+            /* Remove hover effects on mobile */
             .nyc-calendar-day:hover:not(.disabled):not(.booked) {
-                background: transparent; /* No hover effect on mobile */
+                background: transparent;
             }
             
+            /* Enhanced selected state for mobile */
             .nyc-calendar-day.selected {
-                background: #047857; /* Always dark green when selected */
-                color: white;
-                font-weight: bold;
+                border: 2px solid #065f46; /* Add border for mobile */
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-                border: 2px solid #065f46;
             }
             
+            /* Touch feedback - immediate response */
             .nyc-calendar-day:active:not(.disabled):not(.booked) {
-                background: #d1fae5; /* Light green on touch */
-                transform: scale(0.95); /* Subtle press effect */
+                background: #10b981; /* Medium green for touch */
+                color: white;
+                transform: scale(0.95);
+                transition: all 0.1s ease;
             }
         }
         
@@ -408,6 +411,7 @@
             font-weight: bold;
         }
         
+        /* Single, unified selected state rule */
         .nyc-calendar-day.selected {
             background: #047857; /* Dark green */
             color: white;
