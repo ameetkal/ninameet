@@ -256,15 +256,25 @@
             }
             
             .nyc-calendar {
+                /* Extend the white background to fit all dates */
+                min-width: 320px; /* Ensure minimum width for 7 columns */
+                width: 100%;
+                max-width: calc(100vw - 1rem); /* Match container bounds */
                 padding: 0.75rem;
+                overflow-x: auto; /* Allow horizontal scroll within white area */
             }
             
             .nyc-calendar-grid {
+                /* Ensure grid fits within the extended white background */
+                min-width: 280px; /* Minimum width for 7 columns + gaps */
                 gap: 0.125rem;
             }
             
             .nyc-calendar-day {
+                /* Ensure dates don't overflow their grid cells */
+                min-width: 35px; /* Minimum width for date numbers */
                 padding: 0.375rem;
+                box-sizing: border-box;
             }
         }
         
