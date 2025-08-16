@@ -33,7 +33,7 @@ If you're using VS Code, install the "Live Server" extension and right-click on 
 ## File Structure
 
 ```
-ninameet-wedding/
+ninameet/
 ├── index.html          # Main HTML file
 ├── styles.css          # All styling
 ├── script.js           # JavaScript functionality

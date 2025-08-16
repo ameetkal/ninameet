@@ -4,7 +4,7 @@
 
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Click "Create a project" (or "Add project")
-3. Enter project name: `ninameet-wedding` (or your preferred name)
+3. Enter project name: `ninameet` (or your preferred name)
 4. Choose whether to enable Google Analytics (optional)
 5. Click "Create project"
 
@@ -22,7 +22,7 @@
 2. Select "Project settings"
 3. Scroll down to "Your apps" section
 4. Click the web icon (`</>`) to add a web app
-5. Register your app with nickname: `ninameet-wedding-web`
+5. Register your app with nickname: `ninameet-web`
 6. Check "Also set up Firebase Hosting" if you want (optional)
 7. Click "Register app"
 8. Copy the Firebase configuration object
