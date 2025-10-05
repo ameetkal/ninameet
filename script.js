@@ -481,10 +481,126 @@ function initWeddingNavigation() {
     });
 }
 
+// Schedule Day Toggle Function
+function toggleDay(dayName) {
+    const content = document.getElementById(dayName + '-content');
+    const toggle = document.getElementById(dayName + '-toggle');
+    
+    if (content && toggle) {
+        const isExpanded = content.classList.contains('expanded');
+        
+        if (isExpanded) {
+            content.classList.remove('expanded');
+            toggle.classList.remove('expanded');
+            toggle.textContent = '+';
+        } else {
+            content.classList.add('expanded');
+            toggle.classList.add('expanded');
+            toggle.textContent = '−';
+        }
+    }
+}
+
+// Travel Card Toggle Function
+function toggleTravelCard(cardName) {
+    const content = document.getElementById(cardName + '-content');
+    const toggle = document.getElementById(cardName + '-toggle');
+    
+    if (content && toggle) {
+        const isExpanded = content.classList.contains('expanded');
+        
+        if (isExpanded) {
+            content.classList.remove('expanded');
+            toggle.classList.remove('expanded');
+            toggle.textContent = '+';
+        } else {
+            content.classList.add('expanded');
+            toggle.classList.add('expanded');
+            toggle.textContent = '−';
+        }
+    }
+}
+
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initPhotoFlip();
     updateCountdown();
     setInterval(updateCountdown, 1000);
     initWeddingNavigation();
+    initStorySlides();
 }); 
+
+// Story slides animations and navigation
+function initStorySlides() {
+    const container = document.getElementById('storyContainer');
+    if (!container) return;
+
+    // Mark container ready so CSS applies entrance animations
+    container.classList.add('ready');
+
+    const slides = container.querySelectorAll('.story-slide');
+
+    // Ensure the first slide is visible immediately
+    if (slides.length > 0) {
+        slides[0].classList.add('is-visible');
+    }
+
+    // Intersection Observer to reveal slides
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+            }
+        });
+    }, { root: container, threshold: 0.4 });
+
+    slides.forEach(slide => observer.observe(slide));
+
+    // Keyboard navigation: up/down to snap to prev/next slide
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+        e.preventDefault();
+        const current = Array.from(slides).findIndex(slide => {
+            const rect = slide.getBoundingClientRect();
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+            return rect.top >= 0 && rect.top < viewportHeight * 0.5;
+        });
+        let targetIndex = current;
+        if (e.key === 'ArrowDown') targetIndex = Math.min(slides.length - 1, current + 1);
+        if (e.key === 'ArrowUp') targetIndex = Math.max(0, current - 1);
+        slides[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Fallback: if IntersectionObserver doesn't trigger for any reason, reveal on first scroll
+    let revealedOnScroll = false;
+    container.addEventListener('scroll', () => {
+        if (revealedOnScroll) return;
+        revealedOnScroll = true;
+        slides.forEach(slide => slide.classList.add('is-visible'));
+    }, { passive: true });
+}
+
+// Registry Gift Selection Function
+function selectGift(giftType) {
+    // You can customize this function to handle different gift options
+    // For now, it will show an alert with instructions
+    let message = '';
+    let instructions = '';
+    
+    switch(giftType) {
+        case 'honeymoon':
+            message = 'Our Honeymoon Fund';
+            instructions = 'Please send funds via Venmo to @[your-venmo] with "Honeymoon" in the memo, or include cash in an envelope marked "Honeymoon Fund" at the wedding.';
+            break;
+        case 'home':
+            message = 'Our First Home Fund';
+            instructions = 'Please send funds via Venmo to @[your-venmo] with "Calvin Home" in the memo, or include cash in an envelope marked "Home Fund" at the wedding.';
+            break;
+        case 'adventures':
+            message = 'Spontaneous Adventures Fund';
+            instructions = 'Please send funds via Venmo to @[your-venmo] with "Adventures" in the memo, or include cash in an envelope marked "Adventures Fund" at the wedding.';
+            break;
+    }
+    
+    alert(`${message}\n\n${instructions}\n\nThank you for your generosity!`);
+}

@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="wedding-subpage">
     <!-- Background Canvas for Animations -->
     <canvas id="backgroundCanvas"></canvas>
     
@@ -48,11 +48,184 @@
             </header>
         </div>
 
-        <!-- Content will be added later -->
+        <!-- Wedding Schedule -->
         <section class="content-section">
-            <div class="content-placeholder">
-                <h3>Wedding Timeline</h3>
-                <p>Details about our wedding schedule will be added here.</p>
+            <div class="schedule-container">
+                <h3 class="schedule-title">Wedding Weekend Schedule</h3>
+                
+                <!-- Friday Card -->
+                <div class="day-card">
+                    <div class="day-header" onclick="toggleDay('friday')">
+                        <h4 class="day-title">Friday, June 19, 2026</h4>
+                        <span class="day-toggle" id="friday-toggle">+</span>
+                    </div>
+                    <div class="day-content" id="friday-content">
+                        <div class="schedule-item">
+                            <div class="time-slot">6:00 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">Welcome Dinner</h5>
+                                <p class="activity-description">Join us for a casual evening to meet our loved ones.</p>
+                                <div class="activity-info">
+                                    <span class="info-item food-beverage">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Pizza, beer & wine</span>
+                                    </span>
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Casual, comfortable clothes</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time-slot">8:30 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">Cabaret</h5>
+                                <p class="activity-description">Enjoy a celebratory night of performances you won't want to miss.</p>
+                                <div class="activity-info">
+                                    <span class="info-item food-beverage">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Snacks, champagne</span>
+                                    </span>
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Wild, wacky costumes - fun, colorful, quirky, silly, might never wear again</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- More Friday events will be added here -->
+                    </div>
+                </div>
+
+                <!-- Saturday Card -->
+                <div class="day-card">
+                    <div class="day-header" onclick="toggleDay('saturday')">
+                        <h4 class="day-title">Saturday, June 20, 2026</h4>
+                        <span class="day-toggle" id="saturday-toggle">+</span>
+                    </div>
+                    <div class="day-content" id="saturday-content">
+                        <div class="schedule-item">
+                            <div class="time-slot">10:30 AM - 1:00 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">Games (Optional)</h5>
+                                <p class="activity-description">Join us for lawn games and activities before the main celebration begins.</p>
+                                <div class="activity-info">
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Casual, comfortable clothes</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time-slot">4:30 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">Arrival</h5>
+                                <p class="activity-description">Please arrive and get ready for the ceremony.</p>
+                                <div class="activity-info">
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Cocktail attire</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time-slot">5:00 - 6:00 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">Ceremony</h5>
+                                <p class="activity-description">Join us as we say "I do" in an intimate outdoor ceremony.</p>
+                                <div class="activity-info">
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Cocktail attire</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time-slot">6:00 - 8:00 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">Cocktail Hour</h5>
+                                <p class="activity-description">Celebrate with drinks and appetizers while we take photos.</p>
+                                <div class="activity-info">
+                                    <span class="info-item food-beverage">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Hors d'oeuvres, cocktails, wine</span>
+                                    </span>
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Cocktail attire</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time-slot">8:30 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">Dinner</h5>
+                                <p class="activity-description">Sit down for a delicious dinner celebration with family and friends.</p>
+                                <div class="activity-info">
+                                    <span class="info-item food-beverage">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Three-course dinner, wine</span>
+                                    </span>
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Cocktail attire</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time-slot">10:30 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">First Dance</h5>
+                                <p class="activity-description">Join us on the dance floor as we share our first dance as a married couple.</p>
+                                <div class="activity-info">
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Cocktail attire</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sunday Card -->
+                <div class="day-card">
+                    <div class="day-header" onclick="toggleDay('sunday')">
+                        <h4 class="day-title">Sunday, June 21, 2026</h4>
+                        <span class="day-toggle" id="sunday-toggle">+</span>
+                    </div>
+                    <div class="day-content" id="sunday-content">
+                        <div class="schedule-item">
+                            <div class="time-slot">10:30 AM - 1:00 PM</div>
+                            <div class="activity-details">
+                                <h5 class="activity-title">Brunch</h5>
+                                <p class="activity-description">Join us for a relaxed brunch before we all head home.</p>
+                                <div class="activity-info">
+                                    <span class="info-item food-beverage">
+                                        <i class="fas fa-utensils"></i>
+                                        <span>Brunch buffet, mimosas, coffee</span>
+                                    </span>
+                                    <span class="info-item attire">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Casual, comfortable clothes</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>

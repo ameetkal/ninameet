@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="wedding-subpage">
     <!-- Background Canvas for Animations -->
     <canvas id="backgroundCanvas"></canvas>
     
@@ -48,11 +48,112 @@
             </header>
         </div>
 
-        <!-- Content will be added later -->
+        <!-- Travel Information -->
         <section class="content-section">
-            <div class="content-placeholder">
-                <h3>Travel & Accommodation</h3>
-                <p>Information about flights, hotels, and transportation will be added here.</p>
+            <div class="travel-container">
+                <h3 class="travel-title">Travel Information</h3>
+                
+                <!-- About Aix-en-Provence Card -->
+                <div class="travel-card">
+                    <div class="travel-header" onclick="toggleTravelCard('about')">
+                        <h4 class="travel-card-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            About Aix-en-Provence
+                        </h4>
+                        <span class="travel-toggle" id="about-toggle">+</span>
+                    </div>
+                    <div class="travel-content" id="about-content">
+                        <div class="travel-text">
+                            <p>Aix-en-Provence is a charming city in southern France, known as the "City of a Thousand Fountains" and famous for its elegant boulevards, historic architecture, and vibrant café culture. Located in the heart of Provence, it's surrounded by lavender fields, olive groves, and the stunning landscapes that inspired artists like Cézanne.</p>
+                            <p>The city offers a perfect blend of history, art, and French joie de vivre. Stroll down the famous Cours Mirabeau with its plane trees and fountains, explore the medieval old town, or visit one of the many art galleries and museums. The Mediterranean climate ensures sunny days perfect for outdoor dining and leisurely walks.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How to Get There Card -->
+                <div class="travel-card">
+                    <div class="travel-header" onclick="toggleTravelCard('transportation')">
+                        <h4 class="travel-card-title">
+                            <i class="fas fa-plane"></i>
+                            How to Get There
+                        </h4>
+                        <span class="travel-toggle" id="transportation-toggle">+</span>
+                    </div>
+                    <div class="travel-content" id="transportation-content">
+                        <div class="travel-text">
+                            <h5>By Air:</h5>
+                            <p><strong>Marseille Provence Airport (MRS)</strong> - 25 minutes from Aix-en-Provence<br>
+                            Direct flights from major European cities including London, Paris, Frankfurt, and Amsterdam. Many international flights connect through Paris Charles de Gaulle (CDG).</p>
+                            
+                            <h5>From Paris:</h5>
+                            <p>High-speed TGV trains run from Paris Gare de Lyon to Aix-en-Provence TGV station (3 hours). The TGV station is 15 minutes by shuttle from the city center.</p>
+                            
+                            <h5>From Marseille Airport:</h5>
+                            <p>Regular shuttle buses run every 30 minutes to Aix-en-Provence (€8.70, 30 minutes). Taxis are also available (€60-80).</p>
+                            
+                            <h5>Driving:</h5>
+                            <p>From Paris: A7 motorway (7-8 hours). From Nice: A8 motorway (2 hours). Rental cars are available at major airports.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Where to Stay Card -->
+                <div class="travel-card">
+                    <div class="travel-header" onclick="toggleTravelCard('accommodation')">
+                        <h4 class="travel-card-title">
+                            <i class="fas fa-bed"></i>
+                            Where to Stay
+                        </h4>
+                        <span class="travel-toggle" id="accommodation-toggle">+</span>
+                    </div>
+                    <div class="travel-content" id="accommodation-content">
+                        <div class="travel-text">
+                            <h5>Recommended Hotels:</h5>
+                            <p><strong>Hôtel Le Pigonnet</strong> - Luxury hotel with gardens and pool<br>
+                            <strong>Hôtel des Augustins</strong> - Historic hotel in the city center<br>
+                            <strong>Hôtel Cézanne</strong> - Modern boutique hotel near Cours Mirabeau</p>
+                            
+                            <h5>Alternative Options:</h5>
+                            <p><strong>Airbnb</strong> - Many charming apartments in the old town<br>
+                            <strong>Le Mas d'Entremont</strong> - Wedding venue accommodation (limited rooms)<br>
+                            <strong>Nearby Villages</strong> - Consider staying in nearby villages like Lourmarin or Bonnieux for a more rural experience</p>
+                            
+                            <h5>Booking Tips:</h5>
+                            <p>Book early as Aix-en-Provence is popular year-round. Many hotels offer wedding group discounts - mention you're attending our wedding when booking.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Things to Do Card -->
+                <div class="travel-card">
+                    <div class="travel-header" onclick="toggleTravelCard('activities')">
+                        <h4 class="travel-card-title">
+                            <i class="fas fa-camera"></i>
+                            Things to Do
+                        </h4>
+                        <span class="travel-toggle" id="activities-toggle">+</span>
+                    </div>
+                    <div class="travel-content" id="activities-content">
+                        <div class="travel-text">
+                            <h5>Must-See Attractions:</h5>
+                            <p><strong>Cours Mirabeau</strong> - The city's main boulevard with fountains and cafés<br>
+                            <strong>Cathedral of Saint-Sauveur</strong> - Beautiful medieval cathedral<br>
+                            <strong>Musée Granet</strong> - Art museum with works by Cézanne and others<br>
+                            <strong>Atelier Cézanne</strong> - The artist's former studio</p>
+                            
+                            <h5>Day Trips:</h5>
+                            <p><strong>Lavender Fields</strong> - Visit Valensole Plateau (45 minutes) in summer<br>
+                            <strong>Luberon Villages</strong> - Explore Gordes, Roussillon, and Bonnieux<br>
+                            <strong>Marseille</strong> - Coastal city with historic port (45 minutes)<br>
+                            <strong>Avignon</strong> - Papal Palace and medieval architecture (1 hour)</p>
+                            
+                            <h5>Food & Drink:</h5>
+                            <p><strong>Local Markets</strong> - Tuesday, Thursday, and Saturday morning markets<br>
+                            <strong>Wine Tasting</strong> - Visit nearby Côtes de Provence vineyards<br>
+                            <strong>Calissons</strong> - Try the famous local almond candy</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>

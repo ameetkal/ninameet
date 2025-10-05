@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="wedding-subpage">
     <!-- Background Canvas for Animations -->
     <canvas id="backgroundCanvas"></canvas>
     
@@ -48,11 +48,39 @@
             </header>
         </div>
 
-        <!-- Content will be added later -->
+        <!-- Gift Options -->
         <section class="content-section">
-            <div class="content-placeholder">
-                <h3>Gift Registry</h3>
-                <p>Links to our wedding registry will be added here.</p>
+            <div class="registry-container">
+                <h3 class="registry-title">Gift Options!</h3>
+                <div class="registry-content">
+                    <p class="registry-description">Instead of a traditional registry, we'd prefer cash that we can spend towards one of the following experiences. Please follow the instructions - and thank you for your generosity!</p>
+                    
+                    <div class="gift-options">
+                        <button class="gift-button" onclick="selectGift('honeymoon')">
+                            <div class="gift-icon">✈️</div>
+                            <div class="gift-text">
+                                <h4>Our Honeymoon</h4>
+                                <p>Help us create unforgettable memories on our first trip as a married couple</p>
+                            </div>
+                        </button>
+                        
+                        <button class="gift-button" onclick="selectGift('home')">
+                            <div class="gift-icon">🏠</div>
+                            <div class="gift-text">
+                                <h4>Our First Home</h4>
+                                <p>Contribute to setting up Calvin and making it truly ours</p>
+                            </div>
+                        </button>
+                        
+                        <button class="gift-button" onclick="selectGift('adventures')">
+                            <div class="gift-icon">🎒</div>
+                            <div class="gift-text">
+                                <h4>Spontaneous Adventures</h4>
+                                <p>Support our future travels and unexpected experiences together</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
