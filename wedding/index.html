@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nina & Ameet - Wedding</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Background Canvas for Animations -->
+    <canvas id="backgroundCanvas"></canvas>
+    
+    <!-- Floating Elements Container -->
+    <div id="floatingElements"></div>
+    
+    <!-- Navigation -->
+    <nav class="wedding-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Nina & Ameet</a>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link active">RSVP</a>
+                <a href="schedule.html" class="nav-link">Schedule</a>
+                <a href="travel.html" class="nav-link">Travel</a>
+                <a href="story.html" class="nav-link">Our Story</a>
+                <a href="registry.html" class="nav-link">Registry</a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero Section with Photo -->
+        <div class="hero-section">
+            <header class="hero">
+                <div class="hero-content">
+                    <h1 class="main-title">Wedding Details</h1>
+                    <h2 class="couple-names">Can you make it?</h2>
+                    
+                    <div class="date-location">
+                        <div class="date">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>June 19 - 21, 2026</span>
+                        </div>
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div class="location-details">
+                                <span>Aix-en-Provence</span>
+                                <a href="https://maps.app.goo.gl/fsv7D3LjJgHGuzTY7" target="_blank" class="venue-link">Le Mas D'entremont</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="countdown" id="countdown">
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="days">000</span>
+                            <span class="countdown-label">Days</span>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="showForm('planning')">
+                            <i class="fas fa-check-circle"></i>
+                            Yes, I'll be there!
+                        </button>
+                        <button class="btn btn-secondary" onclick="showForm('cant-make-it')">
+                            <i class="fas fa-times-circle"></i>
+                            I can't make it
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Couple Photo Section -->
+            <section class="couple-photo">
+                <div class="photo-container">
+                    <img src="../ninameet-photo.jpeg" alt="Nina & Ameet" class="couple-image" id="mainPhoto">
+                    <div class="photo-hint">🥚</div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Form Modal -->
+    <div class="modal" id="formModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="formTitle">Tell us more!</h3>
+            <form id="rsvpForm" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="response">Your Response *</label>
+                    <input type="text" id="response" name="response" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="question">We'd love your wisdom!</label>
+                    <textarea id="question" name="question" rows="4" placeholder="As we prepare for this new chapter, we invite you to share a question - something thought-provoking, fun, or heartfelt - that you think every couple should consider as they enter married life."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Response
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content success-content">
+            <div class="success-icon">🎉</div>
+            <h3>Thank you!</h3>
+            <p>Your response has been received. We can't wait to celebrate with you!</p>
+            <button class="btn btn-primary" onclick="closeSuccessModal()">Close</button>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+</body>
+</html>
