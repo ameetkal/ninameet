@@ -398,67 +398,20 @@ function initWeddingNavigation() {
     const navMenu = document.getElementById('navMenu');
     
     if (!navToggle || !navMenu) {
-        console.log('Navigation elements not found');
         return;
     }
     
-    console.log('Navigation elements found, adding event listeners');
-    
-    // Add multiple event listeners to ensure clicks are captured
-    // Function to toggle menu with CSS class
+    // Simple toggle function
     function toggleMenu() {
         navMenu.classList.toggle('active');
         navToggle.classList.toggle('active');
-        
-        // Use CSS class instead of inline styles
-        if (navMenu.classList.contains('active')) {
-            navMenu.classList.add('mobile-open');
-            console.log('Added mobile-open class');
-        } else {
-            navMenu.classList.remove('mobile-open');
-            console.log('Removed mobile-open class');
-        }
-        
-        // Check computed style
-        setTimeout(() => {
-            console.log('Final computed style left:', window.getComputedStyle(navMenu).left);
-        }, 10);
     }
     
+    // Single click event listener
     navToggle.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Hamburger clicked');
         toggleMenu();
-        console.log('Menu classes toggled');
-    });
-    
-    navToggle.addEventListener('mousedown', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('Hamburger mousedown');
-        toggleMenu();
-        console.log('Menu classes toggled via mousedown');
-    });
-    
-    // Add touch event for mobile
-    navToggle.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('Hamburger touched');
-        toggleMenu();
-        console.log('Menu classes toggled via touch');
-    });
-    
-    // Add pointer event for modern browsers
-    navToggle.addEventListener('pointerdown', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('Hamburger pointerdown');
-        toggleMenu();
-        console.log('Menu classes toggled via pointerdown');
-        console.log('Menu has active class:', navMenu.classList.contains('active'));
-        console.log('Menu computed style left:', window.getComputedStyle(navMenu).left);
     });
     
     // Close menu when clicking on a link
@@ -467,7 +420,6 @@ function initWeddingNavigation() {
         link.addEventListener('click', function() {
             navMenu.classList.remove('active');
             navToggle.classList.remove('active');
-            navMenu.classList.remove('mobile-open');
         });
     });
     
@@ -476,7 +428,6 @@ function initWeddingNavigation() {
         if (!navToggle.contains(event.target) && !navMenu.contains(event.target)) {
             navMenu.classList.remove('active');
             navToggle.classList.remove('active');
-            navMenu.classList.remove('mobile-open');
         }
     });
 }

@@ -743,32 +743,11 @@ body {
         transition: left 0.3s ease !important;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1) !important;
         z-index: 999 !important;
-        border: 2px solid red !important; /* Debug border */
         gap: 0 !important;
     }
 
     .nav-menu.active {
         left: 0 !important;
-    }
-    
-    /* Force mobile menu open with maximum specificity */
-    .wedding-nav .nav-menu.mobile-open {
-        position: fixed !important;
-        top: 70px !important;
-        left: 0px !important;
-        width: 100% !important;
-        height: calc(100vh - 70px) !important;
-        background: rgba(255, 255, 255, 0.98) !important;
-        backdrop-filter: blur(10px) !important;
-        flex-direction: column !important;
-        justify-content: flex-start !important;
-        align-items: center !important;
-        padding-top: 50px !important;
-        transition: left 0.3s ease !important;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1) !important;
-        z-index: 999 !important;
-        border: 2px solid red !important;
-        gap: 0 !important;
     }
 
     .nav-link {
