@@ -443,6 +443,26 @@ body {
     font-family: inherit;
 }
 
+/* Attendance options styling */
+.attendance-options {
+    display: grid;
+    gap: 10px;
+}
+
+.attendance-options label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.98rem;
+    color: #333;
+}
+
+.attendance-options input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #059669;
+}
+
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {

@@ -4,14 +4,17 @@ function initPhotoFlip() {
     const mainPhoto = document.getElementById('mainPhoto');
     if (!photoContainer || !mainPhoto) return;
     
+    // Resolve correct relative path depending on current page (root vs /wedding/*)
+    const basePrefix = window.location.pathname.includes('/wedding/') ? '../' : '';
+
     let isFlipped = false;
     
     photoContainer.addEventListener('click', function() {
         if (isFlipped) {
-            mainPhoto.src = 'ninameet-photo.jpeg';
+            mainPhoto.src = basePrefix + 'ninameet-photo.jpeg';
             isFlipped = false;
         } else {
-            mainPhoto.src = 'ninameet-photo2.jpeg';
+            mainPhoto.src = basePrefix + 'ninameet-photo2.jpeg';
             isFlipped = true;
         }
         
@@ -26,10 +29,10 @@ function initPhotoFlip() {
     photoContainer.addEventListener('touchstart', function(e) {
         e.preventDefault();
         if (isFlipped) {
-            mainPhoto.src = 'ninameet-photo.jpeg';
+            mainPhoto.src = basePrefix + 'ninameet-photo.jpeg';
             isFlipped = false;
         } else {
-            mainPhoto.src = 'ninameet-photo2.jpeg';
+            mainPhoto.src = basePrefix + 'ninameet-photo2.jpeg';
             isFlipped = true;
         }
         
@@ -63,14 +66,11 @@ updateCountdown(); // Initial call
 // Modal Functions
 function showForm(responseType) {
     const modal = document.getElementById('formModal');
-    const responseField = document.getElementById('response');
     const formTitle = document.getElementById('formTitle');
     
     if (responseType === 'planning') {
-        responseField.value = 'Planning to come!';
         formTitle.textContent = "We're so excited!";
     } else {
-        responseField.value = "Can't make it";
         formTitle.textContent = "We understand and will miss you!";
     }
     
@@ -101,13 +101,16 @@ async function submitForm(event) {
     // Get form field values
     const fullName = document.getElementById('fullName').value;
     const email = document.getElementById('email').value;
-    const response = document.getElementById('response').value;
+    // Collect attendance selections
+    const selected = Array.from(document.querySelectorAll('.attend-option:checked')).map(
+        (el) => el.value
+    );
     const question = document.getElementById('question').value;
     
     const finalData = {
         fullName: fullName.trim(),
         email: email.trim(),
-        response: response.trim(),
+        attendanceSelections: selected,
         question: question.trim()
     };
     
@@ -413,6 +416,13 @@ function initWeddingNavigation() {
         e.stopPropagation();
         toggleMenu();
     });
+    
+    // Touch support for mobile (some mobile browsers may not fire click reliably)
+    navToggle.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMenu();
+    }, { passive: false });
     
     // Close menu when clicking on a link
     const navLinks = document.querySelectorAll('.nav-link');
