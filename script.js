@@ -68,10 +68,21 @@ function showForm(responseType) {
     const modal = document.getElementById('formModal');
     const formTitle = document.getElementById('formTitle');
     
+    // Clear all checkboxes first
+    document.querySelectorAll('.attend-option').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
     if (responseType === 'planning') {
         formTitle.textContent = "We're so excited!";
+        // Select all events except "None"
+        document.querySelectorAll('.attend-option:not(#opt-none)').forEach(checkbox => {
+            checkbox.checked = true;
+        });
     } else {
         formTitle.textContent = "We understand and will miss you!";
+        // Select only "None" option
+        document.getElementById('opt-none').checked = true;
     }
     
     modal.style.display = 'block';
