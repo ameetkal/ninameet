@@ -554,25 +554,21 @@ function initStorySlides() {
 
 // Registry Gift Selection Function
 function selectGift(giftType) {
-    // You can customize this function to handle different gift options
-    // For now, it will show an alert with instructions
-    let message = '';
-    let instructions = '';
+    let url = '';
     
     switch(giftType) {
         case 'honeymoon':
-            message = 'Our Honeymoon Fund';
-            instructions = 'Please send funds via Venmo to @[your-venmo] with "Honeymoon" in the memo, or include cash in an envelope marked "Honeymoon Fund" at the wedding.';
+            url = 'https://withjoy.com/ninameet/registry?pid=1298cf42-915c-4975-b42d-dfe01049d54b';
             break;
         case 'home':
-            message = 'Our First Home Fund';
-            instructions = 'Please send funds via Venmo to @[your-venmo] with "Calvin Home" in the memo, or include cash in an envelope marked "Home Fund" at the wedding.';
+            url = 'https://withjoy.com/ninameet/registry?pid=a450ee97-8f93-4464-a345-ba44cd0f0c4b';
             break;
         case 'adventures':
-            message = 'Spontaneous Adventures Fund';
-            instructions = 'Please send funds via Venmo to @[your-venmo] with "Adventures" in the memo, or include cash in an envelope marked "Adventures Fund" at the wedding.';
+            url = 'https://withjoy.com/ninameet/registry?pid=15e5083b-5d16-4831-8c26-54115b295a65';
             break;
     }
     
-    alert(`${message}\n\n${instructions}\n\nThank you for your generosity!`);
+    if (url) {
+        window.open(url, '_blank');
+    }
 }
