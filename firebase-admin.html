@@ -1018,7 +1018,7 @@
 
 
         // Password protection
-        function checkPassword() {
+        window.checkPassword = function() {
             const password = document.getElementById('passwordInput').value;
             if (password === 'kallarou') {
                 document.getElementById('passwordScreen').style.display = 'none';
@@ -1029,12 +1029,12 @@
                 document.getElementById('passwordError').style.display = 'block';
                 document.getElementById('passwordInput').value = '';
             }
-        }
+        };
 
         // Allow Enter key to submit password
         document.getElementById('passwordInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                checkPassword();
+                window.checkPassword();
             }
         });
 
