@@ -895,14 +895,31 @@
                     new Date(response.timestamp.seconds * 1000).toLocaleDateString() : 
                     new Date(response.createdAt).toLocaleDateString();
                 
-                const responseClass = response.response.includes('Planning') ? 'planning' : 'cant-make-it';
+                // Handle both old and new response formats
+                let responseClass = 'cant-make-it'; // default
+                let responseText = '';
+                
+                if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
+                    // New format with attendance selections
+                    const isAttending = response.attendanceSelections.some(selection => 
+                        !selection.includes("can't make it") && !selection.includes("None")
+                    );
+                    responseClass = isAttending ? 'planning' : 'cant-make-it';
+                    responseText = `Attending: ${response.attendanceSelections.join(', ')}`;
+                } else if (response.response) {
+                    // Old format with single response
+                    responseClass = response.response.includes('Planning') ? 'planning' : 'cant-make-it';
+                    responseText = response.response;
+                } else {
+                    responseText = 'No response data';
+                }
                 
                 return `
                     <div class="response-item ${responseClass}" onclick="toggleResponse(${index})">
                         <div class="response-header">
                             <div class="response-info">
                                 <h3>${response.fullName}</h3>
-                                <p><strong>Response:</strong> ${response.response}</p>
+                                <p><strong>Response:</strong> ${responseText}</p>
                                 <p><small><strong>Date:</strong> ${date}</small></p>
                             </div>
                             <div class="response-arrow">▼</div>
@@ -910,7 +927,10 @@
                         <div class="response-content" id="response-content-${index}">
                             <p><strong>Email:</strong> ${response.email}</p>
                             ${response.question ? `<p><strong>Wisdom:</strong> ${response.question}</p>` : ''}
-                            <p><strong>Full Response:</strong> ${response.response}</p>
+                            ${response.attendanceSelections ? 
+                                `<p><strong>Attendance Selections:</strong> ${response.attendanceSelections.join(', ')}</p>` : 
+                                `<p><strong>Full Response:</strong> ${response.response || 'No response data'}</p>`
+                            }
                         </div>
                     </div>
                 `;
@@ -921,8 +941,31 @@
 
         function updateStats() {
             const total = responses.length;
-            const planning = responses.filter(r => r.response.includes('Planning')).length;
-            const cantMakeIt = responses.filter(r => r.response.includes("Can't")).length;
+            
+            // Handle both old and new response formats for statistics
+            let planning = 0;
+            let cantMakeIt = 0;
+            
+            responses.forEach(r => {
+                if (r.attendanceSelections && Array.isArray(r.attendanceSelections)) {
+                    // New format with attendance selections
+                    const isAttending = r.attendanceSelections.some(selection => 
+                        !selection.includes("can't make it") && !selection.includes("None")
+                    );
+                    if (isAttending) {
+                        planning++;
+                    } else {
+                        cantMakeIt++;
+                    }
+                } else if (r.response) {
+                    // Old format with single response
+                    if (r.response.includes('Planning')) {
+                        planning++;
+                    } else if (r.response.includes("Can't")) {
+                        cantMakeIt++;
+                    }
+                }
+            });
 
             document.getElementById('totalCount').textContent = total;
             document.getElementById('planningCount').textContent = planning;
@@ -935,7 +978,7 @@
                 return;
             }
 
-            const headers = ['Name', 'Email', 'Response', 'Wisdom/Question', 'Date'];
+            const headers = ['Name', 'Email', 'Response/Attendance', 'Wisdom/Question', 'Date'];
             const csvContent = [
                 headers.join(','),
                 ...responses.map(response => {
@@ -943,10 +986,20 @@
                         new Date(response.timestamp.seconds * 1000).toISOString() : 
                         response.createdAt;
                     
+                    // Handle both old and new response formats for CSV export
+                    let responseData = '';
+                    if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
+                        responseData = response.attendanceSelections.join('; ');
+                    } else if (response.response) {
+                        responseData = response.response;
+                    } else {
+                        responseData = 'No response data';
+                    }
+                    
                     return [
                         `"${response.fullName}"`,
                         `"${response.email}"`,
-                        `"${response.response}"`,
+                        `"${responseData}"`,
                         `"${response.question || ''}"`,
                         `"${date}"`
                     ].join(',');

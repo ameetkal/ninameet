@@ -535,9 +535,9 @@ body {
     }
     
     .hero {
-        padding: 30px 30px 40px;
+        padding: 30px 50px 40px;
         border-radius: 20px;
-        margin: 0 15px;
+        margin: 0 5px;
     }
     
     .main-title {

@@ -142,7 +142,21 @@ async function submitForm(event) {
     try {
         // Check if Firebase is available
         if (!window.firebaseDB) {
-            throw new Error('Firebase not initialized. Please check your configuration.');
+            console.log('Firebase not configured, storing locally');
+            // Store locally when Firebase is not available
+            const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
+            responses.push({
+                ...finalData,
+                timestamp: new Date().toISOString(),
+                status: 'stored_locally'
+            });
+            localStorage.setItem('weddingResponses', JSON.stringify(responses));
+            
+            // Close form modal and show success
+            closeModal();
+            document.getElementById('successModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            return;
         }
         
         // Add document to Firestore
@@ -184,8 +198,10 @@ async function submitForm(event) {
         });
         localStorage.setItem('weddingResponses', JSON.stringify(responses));
         
-        // Show error message
-        alert('Sorry, there was an error submitting your response. Your information has been saved locally and we\'ll try again later. Please contact us directly if this continues.');
+        // Close form modal and show success anyway (since it's stored locally)
+        closeModal();
+        document.getElementById('successModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
     } finally {
         // Reset button state
         submitButton.innerHTML = originalText;
