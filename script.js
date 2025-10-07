@@ -52,10 +52,16 @@ function updateCountdown() {
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
 
-    document.getElementById('days').textContent = days;
+    // Only update countdown if elements exist (home page only)
+    const daysElement = document.getElementById('days');
+    const countdownElement = document.getElementById('countdown');
+    
+    if (daysElement) {
+        daysElement.textContent = days;
+    }
 
-    if (distance < 0) {
-        document.getElementById('countdown').innerHTML = '<div class="countdown-item"><span class="countdown-number">🎉</span><span class="countdown-label">Today!</span></div>';
+    if (countdownElement && distance < 0) {
+        countdownElement.innerHTML = '<div class="countdown-item"><span class="countdown-number">🎉</span><span class="countdown-label">Today!</span></div>';
     }
 }
 
@@ -415,20 +421,30 @@ function initWeddingNavigation() {
         return;
     }
     
+    // Prevent duplicate initialization
+    if (navToggle.hasAttribute('data-initialized')) {
+        return;
+    }
+    navToggle.setAttribute('data-initialized', 'true');
+    
     // Simple toggle function
     function toggleMenu() {
         navMenu.classList.toggle('active');
         navToggle.classList.toggle('active');
     }
     
-    // Single click event listener
+    // Remove any existing event listeners first
+    navToggle.onclick = null;
+    navToggle.ontouchstart = null;
+    
+    // Click event listener
     navToggle.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         toggleMenu();
     });
     
-    // Touch support for mobile (some mobile browsers may not fire click reliably)
+    // Touch event listener for mobile
     navToggle.addEventListener('touchstart', function(e) {
         e.preventDefault();
         e.stopPropagation();
