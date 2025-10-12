@@ -74,6 +74,13 @@ function showForm(responseType) {
     const modal = document.getElementById('formModal');
     const formTitle = document.getElementById('formTitle');
     
+    // Clear editing state (we're creating a new RSVP)
+    window.editingResponseId = null;
+    
+    // Reset email field to editable
+    document.getElementById('email').readOnly = false;
+    document.getElementById('email').style.backgroundColor = '';
+    
     // Clear all checkboxes first
     document.querySelectorAll('.attend-option').forEach(checkbox => {
         checkbox.checked = false;
@@ -90,7 +97,7 @@ function showForm(responseType) {
         // Select only "None" option
         document.getElementById('opt-none').checked = true;
     }
-    
+
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
 }
@@ -102,13 +109,135 @@ function closeModal() {
     // Only reset the user-entered fields, not the response field
     document.getElementById('fullName').value = '';
     document.getElementById('email').value = '';
+    document.getElementById('phone').value = '';
     document.getElementById('question').value = '';
+    // Reset email field to editable (in case it was readonly for editing)
+    document.getElementById('email').readOnly = false;
+    document.getElementById('email').style.backgroundColor = '';
+    // Clear editing state
+    window.editingResponseId = null;
 }
 
 function closeSuccessModal() {
     const modal = document.getElementById('successModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
+}
+
+// Show Update Form Modal
+window.showUpdateForm = function showUpdateForm() {
+    const modal = document.getElementById('lookupModal');
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    // Clear previous error/loading
+    document.getElementById('lookupError').style.display = 'none';
+    document.getElementById('lookupLoading').style.display = 'none';
+    document.getElementById('lookupEmail').value = '';
+}
+
+// Close Lookup Modal
+window.closeLookupModal = function closeLookupModal() {
+    const modal = document.getElementById('lookupModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Find existing RSVP by email
+window.findRSVP = async function findRSVP() {
+    const emailInput = document.getElementById('lookupEmail');
+    const email = emailInput.value.trim();
+    const errorEl = document.getElementById('lookupError');
+    const loadingEl = document.getElementById('lookupLoading');
+    
+    // Validate email
+    if (!email) {
+        errorEl.textContent = 'Please enter an email address.';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    // Hide error, show loading
+    errorEl.style.display = 'none';
+    loadingEl.style.display = 'block';
+    
+    try {
+        // Check if Firebase is available
+        if (!window.firebaseDB) {
+            errorEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Firebase is not configured. Cannot look up RSVPs.';
+            errorEl.style.display = 'block';
+            loadingEl.style.display = 'none';
+            return;
+        }
+        
+        // Query Firebase for matching email
+        const q = window.firebaseQuery(
+            window.firebaseCollection(window.firebaseDB, 'wedding-responses'),
+            window.firebaseWhere('email', '==', email)
+        );
+        
+        const querySnapshot = await window.firebaseGetDocs(q);
+        
+        loadingEl.style.display = 'none';
+        
+        if (querySnapshot.empty) {
+            // No RSVP found
+            errorEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> No RSVP found with that email address.';
+            errorEl.style.display = 'block';
+        } else {
+            // Found - pre-fill form and switch to edit mode
+            const doc = querySnapshot.docs[0];
+            prefillForm(doc.id, doc.data());
+            closeLookupModal();
+        }
+    } catch (error) {
+        console.error('Error finding RSVP:', error);
+        loadingEl.style.display = 'none';
+        errorEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error searching for RSVP. Please try again.';
+        errorEl.style.display = 'block';
+    }
+}
+
+// Pre-fill form with existing RSVP data
+function prefillForm(docId, data) {
+    // Store document ID for updating
+    window.editingResponseId = docId;
+    
+    // Open the form modal
+    const modal = document.getElementById('formModal');
+    const formTitle = document.getElementById('formTitle');
+    
+    // Change title to indicate updating
+    formTitle.textContent = "Update Your RSVP";
+    
+    // Pre-fill form fields
+    document.getElementById('fullName').value = data.fullName || '';
+    document.getElementById('email').value = data.email || '';
+    document.getElementById('phone').value = data.phone || '';
+    document.getElementById('question').value = data.question || '';
+    
+    // Make email field readonly (can't change email when updating)
+    document.getElementById('email').readOnly = true;
+    document.getElementById('email').style.backgroundColor = '#f3f4f6';
+    
+    // Clear all checkboxes first
+    document.querySelectorAll('.attend-option').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // Check their existing selections
+    if (data.attendanceSelections && Array.isArray(data.attendanceSelections)) {
+        data.attendanceSelections.forEach(selection => {
+            const checkbox = Array.from(document.querySelectorAll('.attend-option'))
+                .find(cb => cb.value === selection);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        });
+    }
+    
+    // Show modal
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
 }
 
 // Form Submission
@@ -118,6 +247,7 @@ async function submitForm(event) {
     // Get form field values
     const fullName = document.getElementById('fullName').value;
     const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
     // Collect attendance selections
     const selected = Array.from(document.querySelectorAll('.attend-option:checked')).map(
         (el) => el.value
@@ -127,16 +257,20 @@ async function submitForm(event) {
     const finalData = {
         fullName: fullName.trim(),
         email: email.trim(),
+        phone: phone.trim(),
         attendanceSelections: selected,
         question: question.trim()
     };
     
-    console.log('Submitting data to Firebase:', finalData);
+    // Check if we're updating an existing response
+    const isUpdating = window.editingResponseId;
+    
+    console.log(isUpdating ? 'Updating' : 'Creating', 'RSVP in Firebase:', finalData);
     
     // Show loading state
     const submitButton = event.target.querySelector('button[type="submit"]');
     const originalText = submitButton.innerHTML;
-    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (isUpdating ? 'Updating...' : 'Sending...');
     submitButton.disabled = true;
     
     try {
@@ -159,26 +293,40 @@ async function submitForm(event) {
             return;
         }
         
-        // Add document to Firestore
-        const docRef = await window.firebaseAddDoc(
-            window.firebaseCollection(window.firebaseDB, 'wedding-responses'),
-            {
+        if (isUpdating) {
+            // Update existing document
+            const docRef = window.firebaseDoc(window.firebaseDB, 'wedding-responses', window.editingResponseId);
+            await window.firebaseUpdateDoc(docRef, {
                 ...finalData,
-                timestamp: window.firebaseServerTimestamp(),
-                createdAt: new Date().toISOString() // Fallback timestamp
-            }
-        );
-        
-        console.log('Document written with ID: ', docRef.id);
-        
-        // Store locally as backup
-        const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
-        responses.push({
-            ...finalData,
-            timestamp: new Date().toISOString(),
-            firebaseId: docRef.id
-        });
-        localStorage.setItem('weddingResponses', JSON.stringify(responses));
+                updatedAt: window.firebaseServerTimestamp()
+            });
+            
+            console.log('Document updated with ID: ', window.editingResponseId);
+            
+            // Clear editing state
+            window.editingResponseId = null;
+        } else {
+            // Add new document to Firestore
+            const docRef = await window.firebaseAddDoc(
+                window.firebaseCollection(window.firebaseDB, 'wedding-responses'),
+                {
+                    ...finalData,
+                    timestamp: window.firebaseServerTimestamp(),
+                    createdAt: new Date().toISOString() // Fallback timestamp
+                }
+            );
+            
+            console.log('Document written with ID: ', docRef.id);
+            
+            // Store locally as backup
+            const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');
+            responses.push({
+                ...finalData,
+                timestamp: new Date().toISOString(),
+                firebaseId: docRef.id
+            });
+            localStorage.setItem('weddingResponses', JSON.stringify(responses));
+        }
         
         // Close form modal and show success
         closeModal();
@@ -186,7 +334,7 @@ async function submitForm(event) {
         document.body.style.overflow = 'hidden';
         
     } catch (error) {
-        console.error('Error adding document: ', error);
+        console.error('Error saving document: ', error);
         
         // Store locally as backup on error
         const responses = JSON.parse(localStorage.getItem('weddingResponses') || '[]');

@@ -346,6 +346,217 @@
             padding: 20px;
             color: #666;
         }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .responses-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .responses-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #059669;
+            color: white;
+        }
+        
+        .responses-table th {
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #047857;
+            white-space: nowrap;
+        }
+        
+        .responses-table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+        }
+        
+        .responses-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        .responses-table tbody tr.planning {
+            border-left: 4px solid #059669;
+        }
+        
+        .responses-table tbody tr.cant-make-it {
+            border-left: 4px solid #dc2626;
+        }
+        
+        .responses-table td {
+            padding: 12px;
+            vertical-align: top;
+        }
+        
+        .responses-table td:nth-child(1) {
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .responses-table td:nth-child(4) {
+            max-width: 250px;
+            word-wrap: break-word;
+        }
+        
+        .responses-table td:nth-child(6) {
+            max-width: 300px;
+            word-wrap: break-word;
+            font-style: italic;
+            color: #6b7280;
+        }
+        
+        .attendance-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin: 2px;
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        
+        .btn-edit, .btn-delete {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+        
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #b91c1c;
+        }
+        
+        /* Edit Modal Styles */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+        
+        .edit-modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .edit-modal-content h3 {
+            margin: 0 0 20px 0;
+            color: #059669;
+            font-size: 24px;
+        }
+        
+        .edit-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+        
+        .edit-close:hover {
+            color: #333;
+        }
+        
+        .edit-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .edit-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .edit-form-group input,
+        .edit-form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .edit-form-group input:focus,
+        .edit-form-group textarea:focus {
+            outline: none;
+            border-color: #059669;
+        }
+        
+        .edit-form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .edit-form-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .edit-form-actions button[type="submit"] {
+            background: #059669;
+            color: white;
+        }
+        
+        .edit-form-actions button[type="submit"]:hover {
+            background: #047857;
+        }
+        
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -733,6 +944,41 @@
             <h1>Ninameet Admin Dashboard</h1>
         </div>
 
+        <!-- Edit Modal -->
+        <div id="editModal" class="edit-modal" style="display: none;">
+            <div class="edit-modal-content">
+                <span class="edit-close" onclick="closeEditModal()">&times;</span>
+                <h3>Edit Response</h3>
+                <form id="editForm" onsubmit="saveEdit(event)">
+                    <div class="edit-form-group">
+                        <label for="editName">Name *</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="editEmail">Email *</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="editPhone">Phone</label>
+                        <input type="tel" id="editPhone">
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="editAttendance">Attendance (comma-separated)</label>
+                        <textarea id="editAttendance" rows="3"></textarea>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="editQuestion">Wisdom/Question</label>
+                        <textarea id="editQuestion" rows="4"></textarea>
+                    </div>
+                    <input type="hidden" id="editResponseId">
+                    <div class="edit-form-actions">
+                        <button type="button" onclick="closeEditModal()" style="background: #6b7280;">Cancel</button>
+                        <button type="submit">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Tab Navigation -->
         <div class="tabs">
             <button class="tab-button active" onclick="showTab('wedding')">Wedding RSVPs</button>
@@ -758,13 +1004,30 @@
 
             <div class="controls">
                 <button onclick="loadResponses()">🔄 Refresh Data</button>
-                                        <button onclick="exportToCSV()">📊 Export to CSV</button>
+                <button onclick="exportToCSV()">📊 Export to CSV</button>
             </div>
 
             <div class="responses">
-                <h2>Recent Responses</h2>
-                <div id="responsesList" class="loading">
-                    Click "Refresh Data" to load responses...
+                <h2>All Responses</h2>
+                <div class="table-container">
+                    <table id="responsesTable" class="responses-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Attendance</th>
+                                <th>Submitted</th>
+                                <th>Wisdom/Question</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responsesList">
+                            <tr>
+                                <td colspan="7" class="loading">Click "Refresh Data" to load responses...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -886,18 +1149,18 @@
             const responsesList = document.getElementById('responsesList');
             
             if (responses.length === 0) {
-                responsesList.innerHTML = '<div>No responses yet.</div>';
+                responsesList.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No responses yet.</td></tr>';
                 return;
             }
 
             const html = responses.map((response, index) => {
                 const date = response.timestamp ? 
-                    new Date(response.timestamp.seconds * 1000).toLocaleDateString() : 
-                    new Date(response.createdAt).toLocaleDateString();
+                    new Date(response.timestamp.seconds * 1000).toLocaleString() : 
+                    new Date(response.createdAt).toLocaleString();
                 
                 // Handle both old and new response formats
                 let responseClass = 'cant-make-it'; // default
-                let responseText = '';
+                let attendanceHTML = '';
                 
                 if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
                     // New format with attendance selections
@@ -905,34 +1168,37 @@
                         !selection.includes("can't make it") && !selection.includes("None")
                     );
                     responseClass = isAttending ? 'planning' : 'cant-make-it';
-                    responseText = `Attending: ${response.attendanceSelections.join(', ')}`;
+                    
+                    // Create badges for each selection
+                    attendanceHTML = response.attendanceSelections.map(selection => 
+                        `<span class="attendance-badge">${selection}</span>`
+                    ).join(' ');
                 } else if (response.response) {
                     // Old format with single response
                     responseClass = response.response.includes('Planning') ? 'planning' : 'cant-make-it';
-                    responseText = response.response;
+                    attendanceHTML = response.response;
                 } else {
-                    responseText = 'No response data';
+                    attendanceHTML = '<em>No response data</em>';
                 }
                 
+                const phone = response.phone || '-';
+                const question = response.question || '<em>No question submitted</em>';
+                
                 return `
-                    <div class="response-item ${responseClass}" onclick="toggleResponse(${index})">
-                        <div class="response-header">
-                            <div class="response-info">
-                                <h3>${response.fullName}</h3>
-                                <p><strong>Response:</strong> ${responseText}</p>
-                                <p><small><strong>Date:</strong> ${date}</small></p>
+                    <tr class="${responseClass}" data-id="${response.id}">
+                        <td>${response.fullName}</td>
+                        <td>${response.email}</td>
+                        <td>${phone}</td>
+                        <td>${attendanceHTML}</td>
+                        <td>${date}</td>
+                        <td>${question}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-edit" onclick="editResponse('${response.id}')">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteResponse('${response.id}')">🗑️ Delete</button>
                             </div>
-                            <div class="response-arrow">▼</div>
-                        </div>
-                        <div class="response-content" id="response-content-${index}">
-                            <p><strong>Email:</strong> ${response.email}</p>
-                            ${response.question ? `<p><strong>Wisdom:</strong> ${response.question}</p>` : ''}
-                            ${response.attendanceSelections ? 
-                                `<p><strong>Attendance Selections:</strong> ${response.attendanceSelections.join(', ')}</p>` : 
-                                `<p><strong>Full Response:</strong> ${response.response || 'No response data'}</p>`
-                            }
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 `;
             }).join('');
 
@@ -978,7 +1244,7 @@
                 return;
             }
 
-            const headers = ['Name', 'Email', 'Response/Attendance', 'Wisdom/Question', 'Date'];
+            const headers = ['Name', 'Email', 'Phone', 'Attendance', 'Submitted', 'Wisdom/Question'];
             const csvContent = [
                 headers.join(','),
                 ...responses.map(response => {
@@ -999,9 +1265,10 @@
                     return [
                         `"${response.fullName}"`,
                         `"${response.email}"`,
+                        `"${response.phone || ''}"`,
                         `"${responseData}"`,
-                        `"${response.question || ''}"`,
-                        `"${date}"`
+                        `"${date}"`,
+                        `"${response.question || ''}"`
                     ].join(',');
                 })
             ].join('\n');
@@ -1471,19 +1738,7 @@
             }
         };
 
-        // Accordion toggle functions
-        window.toggleResponse = function(index) {
-            const content = document.getElementById(`response-content-${index}`);
-            const arrow = content.previousElementSibling.querySelector('.response-arrow');
-            
-            if (content.classList.contains('expanded')) {
-                content.classList.remove('expanded');
-                arrow.classList.remove('expanded');
-            } else {
-                content.classList.add('expanded');
-                arrow.classList.add('expanded');
-            }
-        };
+        // Accordion toggle function (only for NYC requests now)
 
         window.toggleNYCRequest = function(index) {
             const content = document.getElementById(`nyc-request-content-${index}`);
@@ -1495,6 +1750,116 @@
             } else {
                 content.classList.add('expanded');
                 arrow.classList.add('expanded');
+            }
+        };
+
+        // Edit Response Function - Opens Modal
+        window.editResponse = function(responseId) {
+            const response = responses.find(r => r.id === responseId);
+            if (!response) {
+                alert('Response not found.');
+                return;
+            }
+
+            // Populate the form with current values
+            document.getElementById('editName').value = response.fullName || '';
+            document.getElementById('editEmail').value = response.email || '';
+            document.getElementById('editPhone').value = response.phone || '';
+            
+            // Handle attendance field
+            let currentAttendance = '';
+            if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
+                currentAttendance = response.attendanceSelections.join(', ');
+            } else if (response.response) {
+                currentAttendance = response.response;
+            }
+            document.getElementById('editAttendance').value = currentAttendance;
+            
+            document.getElementById('editQuestion').value = response.question || '';
+            document.getElementById('editResponseId').value = responseId;
+
+            // Show the modal
+            document.getElementById('editModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        };
+
+        // Close Edit Modal
+        window.closeEditModal = function() {
+            document.getElementById('editModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        // Save Edit Function
+        window.saveEdit = async function(event) {
+            event.preventDefault();
+
+            const responseId = document.getElementById('editResponseId').value;
+            const newName = document.getElementById('editName').value;
+            const newEmail = document.getElementById('editEmail').value;
+            const newPhone = document.getElementById('editPhone').value;
+            const attendanceNote = document.getElementById('editAttendance').value;
+            const newQuestion = document.getElementById('editQuestion').value;
+
+            const response = responses.find(r => r.id === responseId);
+            if (!response) {
+                alert('Response not found.');
+                return;
+            }
+
+            try {
+                const { updateDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                // Parse attendance back to array if it contains commas
+                let attendanceUpdate = {};
+                if (attendanceNote.includes(',')) {
+                    attendanceUpdate.attendanceSelections = attendanceNote.split(',').map(s => s.trim()).filter(s => s);
+                } else if (response.attendanceSelections) {
+                    attendanceUpdate.attendanceSelections = attendanceNote ? [attendanceNote.trim()] : [];
+                } else {
+                    attendanceUpdate.response = attendanceNote.trim();
+                }
+                
+                const responseRef = doc(db, 'wedding-responses', responseId);
+                await updateDoc(responseRef, {
+                    fullName: newName.trim(),
+                    email: newEmail.trim(),
+                    phone: newPhone.trim(),
+                    question: newQuestion.trim(),
+                    ...attendanceUpdate
+                });
+
+                closeEditModal();
+                alert('Response updated successfully!');
+                loadResponses(); // Reload to show changes
+            } catch (error) {
+                console.error('Error updating response:', error);
+                alert('Error updating response. Please try again.');
+            }
+        };
+
+        // Delete Response Function
+        window.deleteResponse = async function(responseId) {
+            const response = responses.find(r => r.id === responseId);
+            if (!response) {
+                alert('Response not found.');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete the response from ${response.fullName}? This cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const { deleteDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                const responseRef = doc(db, 'wedding-responses', responseId);
+                await deleteDoc(responseRef);
+
+                alert('Response deleted successfully!');
+                loadResponses(); // Reload to show changes
+            } catch (error) {
+                console.error('Error deleting response:', error);
+                alert('Error deleting response. Please try again.');
             }
         };
     </script>
