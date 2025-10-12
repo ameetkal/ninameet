@@ -78,11 +78,11 @@ body {
 }
 
 .rsvp-deadline {
-    font-size: 1rem;
-    color: #fef3c7;
+    font-size: 1.2rem;
+    color: #fbbf24;
     margin: -5px 0 35px 0;
-    font-weight: 400;
-    opacity: 0.95;
+    font-weight: 600;
+    opacity: 1;
 }
 
 .wedding-announcement {
