@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to Wedding RSVP - Nina & Ameet</title>
+    <meta http-equiv="refresh" content="0; url=/wedding/">
+    <link rel="canonical" href="/wedding/">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 100%);
+            color: #1f2937;
+        }
+        .redirect-message {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .redirect-message h1 {
+            color: #fbbf24;
+            margin-bottom: 1rem;
+        }
+        .redirect-message p {
+            margin-bottom: 1.5rem;
+        }
+        .redirect-message a {
+            color: #fbbf24;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .redirect-message a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-message">
+        <h1>💕 Redirecting...</h1>
+        <p>You're being redirected to our wedding page.</p>
+        <p>If you're not redirected automatically, <a href="/wedding/">click here</a>.</p>
+    </div>
+    
+    <script>
+        // Fallback redirect in case meta refresh doesn't work
+        setTimeout(function() {
+            window.location.href = '/wedding/';
+        }, 1000);
+    </script>
+</body>
+</html>
