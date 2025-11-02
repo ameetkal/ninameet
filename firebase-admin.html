@@ -1121,6 +1121,25 @@
 
         let responses = [];
 
+        // Migration mapping for old values to new values
+        const migrationMap = {
+            "Friday Night Welcome + Cabaret": "Friday Night Welcome Dinner + Cabaret",
+            "Saturday Morning Games": "Friday Evening Games"
+        };
+
+        // Helper function to migrate attendance values
+        function migrateAttendanceValue(value) {
+            return migrationMap[value] || value;
+        }
+
+        // Helper function to migrate an array of attendance selections
+        function migrateAttendanceArray(attendanceSelections) {
+            if (!Array.isArray(attendanceSelections)) {
+                return attendanceSelections;
+            }
+            return attendanceSelections.map(val => migrateAttendanceValue(val));
+        }
+
         window.loadResponses = async function() {
             const responsesList = document.getElementById('responsesList');
             responsesList.innerHTML = '<div class="loading">Loading responses...</div>';
@@ -1163,14 +1182,25 @@
                 let attendanceHTML = '';
                 
                 if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
-                    // New format with attendance selections
-                    const isAttending = response.attendanceSelections.some(selection => 
+                    // New format with attendance selections - migrate old values
+                    const migratedSelections = migrateAttendanceArray(response.attendanceSelections);
+                    
+                    // Sort attendance selections: Friday Evening Games first, then Friday Night Welcome Dinner + Cabaret, then others
+                    const sortedSelections = migratedSelections.sort((a, b) => {
+                        if (a === "Friday Evening Games") return -1;
+                        if (b === "Friday Evening Games") return 1;
+                        if (a === "Friday Night Welcome Dinner + Cabaret") return -1;
+                        if (b === "Friday Night Welcome Dinner + Cabaret") return 1;
+                        return a.localeCompare(b);
+                    });
+                    
+                    const isAttending = sortedSelections.some(selection => 
                         !selection.includes("can't make it") && !selection.includes("None")
                     );
                     responseClass = isAttending ? 'planning' : 'cant-make-it';
                     
-                    // Create badges for each selection
-                    attendanceHTML = response.attendanceSelections.map(selection => 
+                    // Create badges for each selection (with migrated and sorted values)
+                    attendanceHTML = sortedSelections.map(selection => 
                         `<span class="attendance-badge">${selection}</span>`
                     ).join(' ');
                 } else if (response.response) {
@@ -1208,14 +1238,15 @@
         function updateStats() {
             const total = responses.length;
             
-            // Handle both old and new response formats for statistics
+            // Handle both old and new response formats for statistics (with migration)
             let planning = 0;
             let cantMakeIt = 0;
             
             responses.forEach(r => {
                 if (r.attendanceSelections && Array.isArray(r.attendanceSelections)) {
-                    // New format with attendance selections
-                    const isAttending = r.attendanceSelections.some(selection => 
+                    // New format with attendance selections - migrate old values
+                    const migratedSelections = migrateAttendanceArray(r.attendanceSelections);
+                    const isAttending = migratedSelections.some(selection => 
                         !selection.includes("can't make it") && !selection.includes("None")
                     );
                     if (isAttending) {
@@ -1225,9 +1256,10 @@
                     }
                 } else if (r.response) {
                     // Old format with single response
-                    if (r.response.includes('Planning')) {
+                    const migratedResponse = migrateAttendanceValue(r.response);
+                    if (migratedResponse.includes('Planning')) {
                         planning++;
-                    } else if (r.response.includes("Can't")) {
+                    } else if (migratedResponse.includes("Can't")) {
                         cantMakeIt++;
                     }
                 }
@@ -1252,12 +1284,24 @@
                         new Date(response.timestamp.seconds * 1000).toISOString() : 
                         response.createdAt;
                     
-                    // Handle both old and new response formats for CSV export
+                    // Handle both old and new response formats for CSV export (with migration and sorting)
                     let responseData = '';
                     if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
-                        responseData = response.attendanceSelections.join('; ');
+                        // Migrate values before exporting
+                        const migratedSelections = migrateAttendanceArray(response.attendanceSelections);
+                        
+                        // Sort: Friday Evening Games first, then Friday Night Welcome Dinner + Cabaret, then others
+                        const sortedSelections = migratedSelections.sort((a, b) => {
+                            if (a === "Friday Evening Games") return -1;
+                            if (b === "Friday Evening Games") return 1;
+                            if (a === "Friday Night Welcome Dinner + Cabaret") return -1;
+                            if (b === "Friday Night Welcome Dinner + Cabaret") return 1;
+                            return a.localeCompare(b);
+                        });
+                        
+                        responseData = sortedSelections.join('; ');
                     } else if (response.response) {
-                        responseData = response.response;
+                        responseData = migrateAttendanceValue(response.response);
                     } else {
                         responseData = 'No response data';
                     }
@@ -1280,6 +1324,67 @@
             a.download = `wedding-responses-${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             window.URL.revokeObjectURL(url);
+        };
+
+        // Migration function to update all existing RSVP records in Firebase
+        window.migrateRSVPOptions = async function() {
+            if (!confirm('This will update all existing RSVP records in Firebase to use the new option names. This action cannot be undone. Continue?')) {
+                return;
+            }
+
+            try {
+                const { updateDoc, doc, getDocs, collection } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                // Load all responses
+                const q = query(collection(db, 'wedding-responses'));
+                const querySnapshot = await getDocs(q);
+                
+                let updatedCount = 0;
+                let skippedCount = 0;
+                
+                // Process each document
+                for (const docSnap of querySnapshot.docs) {
+                    const data = docSnap.data();
+                    let needsUpdate = false;
+                    const updateData = {};
+                    
+                    // Check if attendanceSelections needs migration
+                    if (data.attendanceSelections && Array.isArray(data.attendanceSelections)) {
+                        const migratedSelections = migrateAttendanceArray(data.attendanceSelections);
+                        
+                        // Check if any values changed
+                        const hasChanges = data.attendanceSelections.some((val, idx) => val !== migratedSelections[idx]);
+                        
+                        if (hasChanges) {
+                            updateData.attendanceSelections = migratedSelections;
+                            needsUpdate = true;
+                        }
+                    }
+                    
+                    // Check if old 'response' field needs migration
+                    if (data.response && migrationMap[data.response]) {
+                        updateData.response = migrateAttendanceValue(data.response);
+                        needsUpdate = true;
+                    }
+                    
+                    if (needsUpdate) {
+                        const docRef = doc(db, 'wedding-responses', docSnap.id);
+                        await updateDoc(docRef, updateData);
+                        updatedCount++;
+                    } else {
+                        skippedCount++;
+                    }
+                }
+                
+                alert(`Migration complete!\n- Updated: ${updatedCount} records\n- No changes needed: ${skippedCount} records\n\nPlease refresh the data to see the changes.`);
+                
+                // Reload responses to show updated values
+                loadResponses();
+                
+            } catch (error) {
+                console.error('Error migrating RSVP options:', error);
+                alert(`Error during migration: ${error.message}. Please check the console for details.`);
+            }
         };
 
 
@@ -1766,12 +1871,14 @@
             document.getElementById('editEmail').value = response.email || '';
             document.getElementById('editPhone').value = response.phone || '';
             
-            // Handle attendance field
+            // Handle attendance field (with migration)
             let currentAttendance = '';
             if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
-                currentAttendance = response.attendanceSelections.join(', ');
+                // Migrate old values before showing in edit form
+                const migratedSelections = migrateAttendanceArray(response.attendanceSelections);
+                currentAttendance = migratedSelections.join(', ');
             } else if (response.response) {
-                currentAttendance = response.response;
+                currentAttendance = migrateAttendanceValue(response.response);
             }
             document.getElementById('editAttendance').value = currentAttendance;
             

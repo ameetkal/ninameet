@@ -224,13 +224,26 @@ function prefillForm(docId, data) {
         checkbox.checked = false;
     });
     
-    // Check their existing selections
+    // Check their existing selections with migration support
     if (data.attendanceSelections && Array.isArray(data.attendanceSelections)) {
+        // Migration mapping for old values to new values
+        const migrationMap = {
+            "Friday Night Welcome + Cabaret": "Friday Night Welcome Dinner + Cabaret",
+            "Saturday Morning Games": "Friday Evening Games"
+        };
+        
         data.attendanceSelections.forEach(selection => {
+            // Map old value to new value if migration needed
+            const migratedValue = migrationMap[selection] || selection;
+            
+            // Find checkbox with the migrated value (should match one of the form options)
             const checkbox = Array.from(document.querySelectorAll('.attend-option'))
-                .find(cb => cb.value === selection);
+                .find(cb => cb.value === migratedValue);
             if (checkbox) {
                 checkbox.checked = true;
+            } else {
+                // If checkbox not found, log for debugging (might indicate data issue)
+                console.warn('Could not find checkbox for value:', migratedValue, 'Original:', selection);
             }
         });
     }
