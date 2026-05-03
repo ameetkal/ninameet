@@ -1091,6 +1091,29 @@
                 <button onclick="openGuestRegistryGuestModal(null)">➕ New guest</button>
             </div>
 
+            <div class="stats" id="guestStats" style="margin-bottom: 20px;">
+                <div class="stat-card">
+                    <div class="stat-number" id="invitedAdultsCount">-</div>
+                    <div>Adults invited</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="attendingAdultsCount">-</div>
+                    <div>Adults attending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="childrenTotalCount">-</div>
+                    <div>Children</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="cabaretPerformersCount">-</div>
+                    <div>Cabaret performers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="dietaryPrefsCount">-</div>
+                    <div>Dietary preferences</div>
+                </div>
+            </div>
+
             <div class="responses">
                 <h2>Guests</h2>
                 <div class="table-container">
@@ -1523,9 +1546,36 @@
         // ----- Wedding RSVPs tab (wedding-guests; groups edited via New group modal) -----
         let guestRegistryGuests = [];
         let guestRegistryGuestSort = { key: 'canonicalName', dir: 1 };
+        let guestRegistryGroups = [];
 
         function normGuestSearch(name) {
             return String(name || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+
+        function computeGuestRegistryStats() {
+            const invitedAdults = guestRegistryGuests.length;
+
+            const attendingAdults = guestRegistryGuests.filter((g) =>
+                !!g.attendingFriday || !!g.attendingSaturday || !!g.attendingSunday
+            ).length;
+
+            const cabaretPerformers = guestRegistryGuests.filter((g) => !!g.cabaretInterested).length;
+
+            const dietaryPrefs = guestRegistryGuests.filter((g) => {
+                const notes = String(g.dietaryNotes || '').trim();
+                return !!g.dietaryVegan || !!g.dietaryVegetarian || !!g.dietaryOther || notes.length > 0;
+            }).length;
+
+            const childrenTotal = guestRegistryGroups.reduce((sum, grp) => {
+                const n = Number.parseInt(grp.childrenCount ?? 0, 10);
+                return sum + (Number.isFinite(n) ? n : 0);
+            }, 0);
+
+            document.getElementById('invitedAdultsCount').textContent = String(invitedAdults);
+            document.getElementById('attendingAdultsCount').textContent = String(attendingAdults);
+            document.getElementById('childrenTotalCount').textContent = String(childrenTotal);
+            document.getElementById('cabaretPerformersCount').textContent = String(cabaretPerformers);
+            document.getElementById('dietaryPrefsCount').textContent = String(dietaryPrefs);
         }
 
         function getSortedGuestRegistryGuests() {
@@ -1566,8 +1616,12 @@
             eb.innerHTML = '<tr><td colspan="7" class="loading">Loading…</td></tr>';
 
             try {
-                const ysnap = await getDocs(collection(db, 'wedding-guests'));
+                const [ysnap, gsnap] = await Promise.all([
+                    getDocs(collection(db, 'wedding-guests')),
+                    getDocs(collection(db, 'wedding-groups')),
+                ]);
                 guestRegistryGuests = ysnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                guestRegistryGroups = gsnap.docs.map((d) => ({ id: d.id, ...d.data() }));
                 renderGuestRegistryTables();
             } catch (error) {
                 console.error(error);
@@ -1578,6 +1632,7 @@
         function renderGuestRegistryTables() {
             const eb = document.getElementById('guestRegistryGuestsBody');
             updateGuestSortHeaderIcons();
+            computeGuestRegistryStats();
 
             if (guestRegistryGuests.length === 0) {
                 eb.innerHTML = '<tr><td colspan="7">No guest documents yet.</td></tr>';
