@@ -1451,4 +1451,207 @@ body {
     .gift-icon {
         font-size: 2rem;
     }
+}
+
+/* ----- RSVP flow (group editor) ----- */
+.rsvp-flow-wrap {
+    padding-bottom: 80px;
+}
+
+.rsvp-flow-header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-top: 12px;
+}
+
+.rsvp-flow-title {
+    font-size: 2.75rem;
+    color: #047857;
+    margin-bottom: 12px;
+}
+
+.rsvp-flow-lead {
+    max-width: 560px;
+    margin: 0 auto;
+    color: #4b5563;
+    font-size: 1.05rem;
+    line-height: 1.55;
+}
+
+.rsvp-card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 28px rgba(4, 120, 87, 0.08);
+    border: 1px solid rgba(4, 120, 87, 0.12);
+}
+
+.rsvp-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    color: #065f46;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.rsvp-search-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.rsvp-search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 14px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+.rsvp-status {
+    margin-top: 14px;
+    min-height: 1.4em;
+    color: #374151;
+    font-weight: 500;
+}
+
+.rsvp-muted {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+}
+
+.rsvp-pick-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.rsvp-pick-btn {
+    text-align: left;
+    justify-content: flex-start;
+}
+
+.rsvp-day-key {
+    font-size: 0.92rem;
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.rsvp-party-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    margin-bottom: 20px;
+}
+
+.rsvp-party-table th,
+.rsvp-party-table td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+}
+
+.rsvp-party-table th {
+    font-weight: 600;
+    color: #065f46;
+    white-space: nowrap;
+}
+
+.rsvp-name-cell {
+    font-weight: 600;
+    color: #111827;
+    min-width: 120px;
+}
+
+.rsvp-diet-cell {
+    min-width: 200px;
+}
+
+.rsvp-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 10px;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.rsvp-notes-input {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.88rem;
+}
+
+.rsvp-field-grid {
+    margin-top: 12px;
+}
+
+.rsvp-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 640px) {
+    .rsvp-contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rsvp-party-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+.rsvp-small-num {
+    max-width: 120px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 16px;
+}
+
+.rsvp-subhead {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    margin-top: 20px;
+    margin-bottom: 6px;
+    color: #065f46;
+}
+
+.rsvp-save-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.rsvp-editor .form-group textarea,
+.rsvp-editor .form-group input[type="email"],
+.rsvp-editor .form-group input[type="tel"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 16px;
+}
+
+.hero .button-group a.btn {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 } 

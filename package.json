@@ -1,0 +1,13 @@
+{
+  "name": "ninameet",
+  "private": true,
+  "description": "Wedding site utilities (Firestore migration scripts)",
+  "type": "module",
+  "scripts": {
+    "migrate:wedding": "node scripts/migrate-wedding-firestore.mjs --xlsx data/wedding-invite-list.xlsx --merge-responses"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "xlsx": "^0.18.5"
+  }
+}

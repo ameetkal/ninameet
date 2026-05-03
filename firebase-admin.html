@@ -979,10 +979,88 @@
             </div>
         </div>
 
+        <!-- Guest registry: edit guest -->
+        <div id="guestRegistryGuestModal" class="edit-modal" style="display: none;">
+            <div class="edit-modal-content" style="max-width: 520px;">
+                <span class="edit-close" onclick="closeGuestRegistryGuestModal()">&times;</span>
+                <h3 id="guestRegistryGuestModalTitle">Guest</h3>
+                <form id="guestRegistryGuestForm" onsubmit="saveGuestRegistryGuest(event)">
+                    <input type="hidden" id="grGuestMode" value="edit">
+                    <div class="edit-form-group">
+                        <label for="grGuestDocId">Firestore document ID</label>
+                        <input type="text" id="grGuestDocId" required placeholder="e.g. 12_01_jane-doe">
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestGroupId">Group ID</label>
+                        <input type="text" id="grGuestGroupId" required placeholder="Matches spreadsheet household">
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestCanonicalName">Full name</label>
+                        <input type="text" id="grGuestCanonicalName" required>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestEmail">Email</label>
+                        <input type="email" id="grGuestEmail">
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestPhone">Phone</label>
+                        <input type="tel" id="grGuestPhone">
+                    </div>
+                    <div class="edit-form-group">
+                        <label>Days attending</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestFri"> Friday</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestSat"> Saturday</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestSun"> Sunday</label>
+                    </div>
+                    <div class="edit-form-group">
+                        <label>Diet</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestVegan"> Vegan</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestVegetarian"> Vegetarian</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestOther"> Other restriction</label>
+                        <textarea id="grGuestDietNotes" rows="2" placeholder="Notes"></textarea>
+                    </div>
+                    <div class="edit-form-group">
+                        <label><input type="checkbox" id="grGuestCabaret"> Interested in performing at cabaret</label>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestQuestion">Wisdom / question</label>
+                        <textarea id="grGuestQuestion" rows="3"></textarea>
+                    </div>
+                    <div class="edit-form-actions">
+                        <button type="button" onclick="closeGuestRegistryGuestModal()" style="background: #6b7280;">Cancel</button>
+                        <button type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Guest registry: edit group -->
+        <div id="guestRegistryGroupModal" class="edit-modal" style="display: none;">
+            <div class="edit-modal-content" style="max-width: 420px;">
+                <span class="edit-close" onclick="closeGuestRegistryGroupModal()">&times;</span>
+                <h3 id="guestRegistryGroupModalTitle">Household</h3>
+                <form id="guestRegistryGroupForm" onsubmit="saveGuestRegistryGroup(event)">
+                    <div class="edit-form-group">
+                        <label for="grGroupDocId">Group ID</label>
+                        <input type="text" id="grGroupDocId" required>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGroupChildren">Children attending (household)</label>
+                        <input type="number" id="grGroupChildren" min="0" step="1" value="0">
+                    </div>
+                    <div class="edit-form-actions">
+                        <button type="button" onclick="closeGuestRegistryGroupModal()" style="background: #6b7280;">Cancel</button>
+                        <button type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Tab Navigation -->
         <div class="tabs">
-            <button class="tab-button active" onclick="showTab('wedding')">Wedding RSVPs</button>
-            <button class="tab-button" onclick="showTab('nyc')">NYC Stay Management</button>
+            <button type="button" class="tab-button active" data-tab="wedding" onclick="showTab('wedding')">Legacy form RSVPs</button>
+            <button type="button" class="tab-button" data-tab="guests" onclick="showTab('guests')">Guest registry</button>
+            <button type="button" class="tab-button" data-tab="nyc" onclick="showTab('nyc')">NYC Stay Management</button>
         </div>
 
         <!-- Wedding RSVPs Tab -->
@@ -1026,6 +1104,57 @@
                             <tr>
                                 <td colspan="7" class="loading">Click "Refresh Data" to load responses...</td>
                             </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guest registry (Firestore wedding-groups + wedding-guests) -->
+        <div id="guestsTab" class="tab-content">
+            <div class="controls">
+                <button onclick="loadGuestRegistry()">🔄 Refresh guests &amp; groups</button>
+                <button onclick="exportGuestRegistryCSV()">📊 Export guests CSV</button>
+                <button onclick="openGuestRegistryGroupModal()">➕ New group</button>
+                <button onclick="openGuestRegistryGuestModal(null)">➕ New guest</button>
+            </div>
+
+            <div class="responses">
+                <h2>Households (wedding-groups)</h2>
+                <div class="table-container">
+                    <table class="responses-table">
+                        <thead>
+                            <tr>
+                                <th>Group ID</th>
+                                <th>Children</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guestRegistryGroupsBody">
+                            <tr><td colspan="3" class="loading">Open this tab or click Refresh.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="responses">
+                <h2>Guests (wedding-guests)</h2>
+                <div class="table-container">
+                    <table class="responses-table">
+                        <thead>
+                            <tr>
+                                <th>Doc ID</th>
+                                <th>Name</th>
+                                <th>Group</th>
+                                <th>Email</th>
+                                <th>Fri</th>
+                                <th>Sat</th>
+                                <th>Sun</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guestRegistryGuestsBody">
+                            <tr><td colspan="8" class="loading">Open this tab or click Refresh.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -1104,7 +1233,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, getDocs, orderBy, query, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, collection, getDocs, orderBy, query, addDoc, serverTimestamp, doc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Your Firebase configuration (same as main site)
         const firebaseConfig = {
@@ -1387,6 +1516,290 @@
             }
         };
 
+        // ----- Guest registry (wedding-groups / wedding-guests) -----
+        let guestRegistryGroups = [];
+        let guestRegistryGuests = [];
+
+        function normGuestSearch(name) {
+            return String(name || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+
+        window.loadGuestRegistry = async function() {
+            const gb = document.getElementById('guestRegistryGroupsBody');
+            const eb = document.getElementById('guestRegistryGuestsBody');
+            gb.innerHTML = '<tr><td colspan="3" class="loading">Loading…</td></tr>';
+            eb.innerHTML = '<tr><td colspan="8" class="loading">Loading…</td></tr>';
+
+            try {
+                const [gsnap, ysnap] = await Promise.all([
+                    getDocs(collection(db, 'wedding-groups')),
+                    getDocs(collection(db, 'wedding-guests')),
+                ]);
+
+                guestRegistryGroups = gsnap.docs.map((d) => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => Number(a.id) - Number(b.id));
+                guestRegistryGuests = ysnap.docs.map((d) => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => normGuestSearch(a.canonicalName).localeCompare(normGuestSearch(b.canonicalName)));
+
+                renderGuestRegistryTables();
+            } catch (error) {
+                console.error(error);
+                gb.innerHTML = '<tr><td colspan="3" style="color:red;">Error loading groups.</td></tr>';
+                eb.innerHTML = '<tr><td colspan="8" style="color:red;">Error loading guests.</td></tr>';
+            }
+        };
+
+        function renderGuestRegistryTables() {
+            const gb = document.getElementById('guestRegistryGroupsBody');
+            const eb = document.getElementById('guestRegistryGuestsBody');
+
+            if (guestRegistryGroups.length === 0) {
+                gb.innerHTML = '<tr><td colspan="3">No household documents yet.</td></tr>';
+            } else {
+                gb.innerHTML = guestRegistryGroups.map((g) => `
+                    <tr>
+                        <td>${g.id}</td>
+                        <td>${g.childrenCount ?? 0}</td>
+                        <td>
+                            <button onclick="openGuestRegistryGroupModalEncoded('${encodeURIComponent(g.id)}')">✏️ Edit</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            if (guestRegistryGuests.length === 0) {
+                eb.innerHTML = '<tr><td colspan="8">No guest documents yet.</td></tr>';
+            } else {
+                eb.innerHTML = guestRegistryGuests.map((y) => `
+                    <tr>
+                        <td style="font-size:11px;">${y.id}</td>
+                        <td>${y.canonicalName || ''}</td>
+                        <td>${y.groupId ?? ''}</td>
+                        <td>${y.email || ''}</td>
+                        <td>${y.attendingFriday ? '✓' : ''}</td>
+                        <td>${y.attendingSaturday ? '✓' : ''}</td>
+                        <td>${y.attendingSunday ? '✓' : ''}</td>
+                        <td>
+                            <button onclick="openGuestRegistryGuestModalEncoded('${encodeURIComponent(y.id)}')">✏️</button>
+                            <button onclick="deleteGuestRegistryGuestEncoded('${encodeURIComponent(y.id)}')">🗑️</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        window.openGuestRegistryGuestModalEncoded = function(enc) {
+            const id = decodeURIComponent(enc);
+            const guest = guestRegistryGuests.find((g) => g.id === id);
+            window.openGuestRegistryGuestModal(guest || null);
+        };
+
+        window.openGuestRegistryGuestModal = function(guest) {
+            document.getElementById('guestRegistryGuestModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            const modeEl = document.getElementById('grGuestMode');
+            const idEl = document.getElementById('grGuestDocId');
+
+            if (!guest) {
+                modeEl.value = 'add';
+                document.getElementById('guestRegistryGuestModalTitle').textContent = 'New guest';
+                idEl.readOnly = false;
+                idEl.value = '';
+                document.getElementById('grGuestGroupId').value = '';
+                document.getElementById('grGuestCanonicalName').value = '';
+                document.getElementById('grGuestEmail').value = '';
+                document.getElementById('grGuestPhone').value = '';
+                document.getElementById('grGuestFri').checked = false;
+                document.getElementById('grGuestSat').checked = false;
+                document.getElementById('grGuestSun').checked = false;
+                document.getElementById('grGuestVegan').checked = false;
+                document.getElementById('grGuestVegetarian').checked = false;
+                document.getElementById('grGuestOther').checked = false;
+                document.getElementById('grGuestDietNotes').value = '';
+                document.getElementById('grGuestCabaret').checked = false;
+                document.getElementById('grGuestQuestion').value = '';
+                return;
+            }
+
+            modeEl.value = 'edit';
+            document.getElementById('guestRegistryGuestModalTitle').textContent = 'Edit guest';
+            idEl.readOnly = true;
+            idEl.value = guest.id;
+            document.getElementById('grGuestGroupId').value = guest.groupId ?? '';
+            document.getElementById('grGuestCanonicalName').value = guest.canonicalName || '';
+            document.getElementById('grGuestEmail').value = guest.email || '';
+            document.getElementById('grGuestPhone').value = guest.phone || '';
+            document.getElementById('grGuestFri').checked = !!guest.attendingFriday;
+            document.getElementById('grGuestSat').checked = !!guest.attendingSaturday;
+            document.getElementById('grGuestSun').checked = !!guest.attendingSunday;
+            document.getElementById('grGuestVegan').checked = !!guest.dietaryVegan;
+            document.getElementById('grGuestVegetarian').checked = !!guest.dietaryVegetarian;
+            document.getElementById('grGuestOther').checked = !!guest.dietaryOther;
+            document.getElementById('grGuestDietNotes').value = guest.dietaryNotes || '';
+            document.getElementById('grGuestCabaret').checked = !!guest.cabaretInterested;
+            document.getElementById('grGuestQuestion').value = guest.question || '';
+        };
+
+        window.closeGuestRegistryGuestModal = function() {
+            document.getElementById('guestRegistryGuestModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        window.saveGuestRegistryGuest = async function(event) {
+            event.preventDefault();
+
+            const mode = document.getElementById('grGuestMode').value;
+            const guestDocId = document.getElementById('grGuestDocId').value.trim();
+            const canonicalName = document.getElementById('grGuestCanonicalName').value.trim();
+            const groupId = document.getElementById('grGuestGroupId').value.trim();
+            const email = document.getElementById('grGuestEmail').value.trim();
+            const phone = document.getElementById('grGuestPhone').value.trim();
+
+            if (!guestDocId || !canonicalName || !groupId) {
+                alert('Document ID, name, and group are required.');
+                return;
+            }
+
+            const payload = {
+                canonicalName,
+                groupId,
+                email,
+                emailLower: email.toLowerCase(),
+                phone,
+                searchName: normGuestSearch(canonicalName),
+                attendingFriday: document.getElementById('grGuestFri').checked,
+                attendingSaturday: document.getElementById('grGuestSat').checked,
+                attendingSunday: document.getElementById('grGuestSun').checked,
+                dietaryVegan: document.getElementById('grGuestVegan').checked,
+                dietaryVegetarian: document.getElementById('grGuestVegetarian').checked,
+                dietaryOther: document.getElementById('grGuestOther').checked,
+                dietaryNotes: document.getElementById('grGuestDietNotes').value.trim(),
+                cabaretInterested: document.getElementById('grGuestCabaret').checked,
+                question: document.getElementById('grGuestQuestion').value.trim(),
+                updatedAt: serverTimestamp(),
+            };
+
+            try {
+                if (mode === 'add') {
+                    payload.createdAt = serverTimestamp();
+                    payload.legacySubmissionIds = [];
+                }
+
+                await setDoc(doc(db, 'wedding-guests', guestDocId), payload, { merge: true });
+
+                closeGuestRegistryGuestModal();
+                alert('Guest saved.');
+                loadGuestRegistry();
+            } catch (error) {
+                console.error(error);
+                alert('Could not save guest: ' + error.message);
+            }
+        };
+
+        window.deleteGuestRegistryGuestEncoded = async function(enc) {
+            const id = decodeURIComponent(enc);
+            if (!confirm(`Delete guest document "${id}"? This cannot be undone.`)) return;
+
+            try {
+                await deleteDoc(doc(db, 'wedding-guests', id));
+                alert('Guest deleted.');
+                loadGuestRegistry();
+            } catch (error) {
+                console.error(error);
+                alert('Could not delete: ' + error.message);
+            }
+        };
+
+        window.openGuestRegistryGroupModalEncoded = function(enc) {
+            const id = decodeURIComponent(enc);
+            const row = guestRegistryGroups.find((g) => g.id === id);
+            window.openGuestRegistryGroupModal(row || null);
+        };
+
+        window.openGuestRegistryGroupModal = function(group) {
+            document.getElementById('guestRegistryGroupModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            const idEl = document.getElementById('grGroupDocId');
+
+            if (!group) {
+                document.getElementById('guestRegistryGroupModalTitle').textContent = 'New household';
+                idEl.readOnly = false;
+                idEl.value = '';
+                document.getElementById('grGroupChildren').value = '0';
+                return;
+            }
+
+            document.getElementById('guestRegistryGroupModalTitle').textContent = 'Edit household';
+            idEl.readOnly = true;
+            idEl.value = group.id;
+            document.getElementById('grGroupChildren').value = String(group.childrenCount ?? 0);
+        };
+
+        window.closeGuestRegistryGroupModal = function() {
+            document.getElementById('guestRegistryGroupModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        window.saveGuestRegistryGroup = async function(event) {
+            event.preventDefault();
+
+            const gid = document.getElementById('grGroupDocId').value.trim();
+            const childrenCount = Math.max(0, parseInt(document.getElementById('grGroupChildren').value, 10) || 0);
+
+            if (!gid) {
+                alert('Group ID is required.');
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, 'wedding-groups', gid), {
+                    groupNumber: Number(gid),
+                    childrenCount,
+                    updatedAt: serverTimestamp(),
+                }, { merge: true });
+
+                closeGuestRegistryGroupModal();
+                alert('Household saved.');
+                loadGuestRegistry();
+            } catch (error) {
+                console.error(error);
+                alert('Could not save household: ' + error.message);
+            }
+        };
+
+        window.exportGuestRegistryCSV = function() {
+            if (guestRegistryGuests.length === 0) {
+                alert('Load guest registry first.');
+                return;
+            }
+
+            const headers = [
+                'guestDocId', 'canonicalName', 'groupId', 'email', 'phone',
+                'attendingFriday', 'attendingSaturday', 'attendingSunday',
+                'dietaryVegan', 'dietaryVegetarian', 'dietaryOther', 'dietaryNotes',
+                'cabaretInterested', 'question',
+            ];
+
+            const rows = guestRegistryGuests.map((y) =>
+                headers.map((h) => {
+                    const v = y[h];
+                    if (v === undefined || v === null) return '""';
+                    const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
+                    return '"' + s.replace(/"/g, '""') + '"';
+                }).join(','),
+            );
+
+            const csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `wedding-guests-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
 
 
         // Password protection
@@ -1412,27 +1825,27 @@
 
         // Tab switching
         window.showTab = function(tabName) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
-            // Remove active class from all buttons
+
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('active');
             });
-            
-            // Show selected tab
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            
-            // Add active class to clicked button
-            event.target.classList.add('active');
-            
-            // Load data for the selected tab
+
+            const panel = document.getElementById(tabName + 'Tab');
+            if (panel) panel.classList.add('active');
+
+            document.querySelector(`.tab-button[data-tab="${tabName}"]`)?.classList.add('active');
+
             if (tabName === 'nyc') {
                 loadNYCRequests();
                 loadBlockedDates();
                 renderAdminCalendar();
+            }
+
+            if (tabName === 'guests') {
+                loadGuestRegistry();
             }
         };
 

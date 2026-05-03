@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Legacy free-form RSVP submissions (historical)
+    match /wedding-responses/{document} {
+      allow create: if true;
+      allow read, update, delete: if true;
+    }
+
+    // Canonical invite list + group-level children count
+    match /wedding-groups/{groupId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /wedding-guests/{guestId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /nyc-stay-requests/{document} {
+      allow read, write: if true;
+    }
+
+    match /blocked-dates/{document} {
+      allow read, write: if true;
+    }
+  }
+}

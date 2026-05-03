@@ -69,10 +69,11 @@ function updateCountdown() {
 setInterval(updateCountdown, 60000);
 updateCountdown(); // Initial call
 
-// Modal Functions
+// Modal Functions (legacy single-form RSVP pages only — omitted on wedding landing)
 function showForm(responseType) {
     const modal = document.getElementById('formModal');
     const formTitle = document.getElementById('formTitle');
+    if (!modal || !formTitle) return;
     
     // Clear editing state (we're creating a new RSVP)
     window.editingResponseId = null;
@@ -104,6 +105,7 @@ function showForm(responseType) {
 
 function closeModal() {
     const modal = document.getElementById('formModal');
+    if (!modal) return;
     modal.style.display = 'none';
     document.body.style.overflow = 'auto'; // Restore scrolling
     // Only reset the user-entered fields, not the response field
@@ -120,6 +122,7 @@ function closeModal() {
 
 function closeSuccessModal() {
     const modal = document.getElementById('successModal');
+    if (!modal) return;
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
 }
@@ -127,6 +130,7 @@ function closeSuccessModal() {
 // Show Update Form Modal
 window.showUpdateForm = function showUpdateForm() {
     const modal = document.getElementById('lookupModal');
+    if (!modal) return;
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
     // Clear previous error/loading
@@ -138,6 +142,7 @@ window.showUpdateForm = function showUpdateForm() {
 // Close Lookup Modal
 window.closeLookupModal = function closeLookupModal() {
     const modal = document.getElementById('lookupModal');
+    if (!modal) return;
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
 }
@@ -145,6 +150,7 @@ window.closeLookupModal = function closeLookupModal() {
 // Find existing RSVP by email
 window.findRSVP = async function findRSVP() {
     const emailInput = document.getElementById('lookupEmail');
+    if (!emailInput) return;
     const email = emailInput.value.trim();
     const errorEl = document.getElementById('lookupError');
     const loadingEl = document.getElementById('lookupLoading');
@@ -205,6 +211,7 @@ function prefillForm(docId, data) {
     // Open the form modal
     const modal = document.getElementById('formModal');
     const formTitle = document.getElementById('formTitle');
+    if (!modal || !formTitle) return;
     
     // Change title to indicate updating
     formTitle.textContent = "Update Your RSVP";
@@ -256,9 +263,12 @@ function prefillForm(docId, data) {
 // Form Submission
 async function submitForm(event) {
     event.preventDefault();
+
+    const fullNameEl = document.getElementById('fullName');
+    if (!fullNameEl) return;
     
     // Get form field values
-    const fullName = document.getElementById('fullName').value;
+    const fullName = fullNameEl.value;
     const email = document.getElementById('email').value;
     const phone = document.getElementById('phone').value;
     // Collect attendance selections
@@ -375,10 +385,10 @@ window.onclick = function(event) {
     const formModal = document.getElementById('formModal');
     const successModal = document.getElementById('successModal');
     
-    if (event.target === formModal) {
+    if (formModal && event.target === formModal) {
         closeModal();
     }
-    if (event.target === successModal) {
+    if (successModal && event.target === successModal) {
         closeSuccessModal();
     }
 }
@@ -386,6 +396,11 @@ window.onclick = function(event) {
 // Close modals with Escape key
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
+        const lookupModal = document.getElementById('lookupModal');
+        if (lookupModal && lookupModal.style.display === 'block') {
+            closeLookupModal();
+            return;
+        }
         closeModal();
         closeSuccessModal();
     }

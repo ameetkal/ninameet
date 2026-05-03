@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP - Nina &amp; Ameet</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="wedding-subpage rsvp-page">
+    <canvas id="backgroundCanvas"></canvas>
+    <div id="floatingElements"></div>
+
+    <nav class="wedding-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Nina &amp; Ameet</a>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="rsvp.html" class="nav-link active">RSVP</a>
+                <a href="schedule.html" class="nav-link">Schedule</a>
+                <a href="travel.html" class="nav-link">Travel</a>
+                <a href="story.html" class="nav-link">Our Story</a>
+                <a href="registry.html" class="nav-link">Registry</a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container rsvp-flow-wrap">
+        <header class="rsvp-flow-header">
+            <h1 class="main-title rsvp-flow-title">RSVP</h1>
+            <p class="rsvp-flow-lead">
+                Search by your name or email. Anyone in your invitation group can update responses for everyone in that group.
+            </p>
+        </header>
+
+        <section class="rsvp-card">
+            <h2 class="rsvp-card-title"><i class="fas fa-search"></i> Find your invitation</h2>
+            <div class="rsvp-search-row">
+                <input type="text" id="rsvpSearchInput" class="rsvp-search-input"
+                    placeholder="Full name or email address"
+                    autocomplete="name">
+                <button type="button" id="rsvpSearchBtn" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            <p id="rsvpSearchStatus" class="rsvp-status" aria-live="polite"></p>
+            <div id="rsvpPickGroup" class="rsvp-pick-group"></div>
+        </section>
+
+        <section id="rsvpEditor" class="rsvp-card rsvp-editor" hidden>
+            <h2 class="rsvp-card-title">Your party</h2>
+            <p class="rsvp-day-key">
+                <strong>Friday</strong> — welcome dinner, lawn games &amp; cabaret night &nbsp;·&nbsp;
+                <strong>Saturday</strong> — ceremony &amp; reception &nbsp;·&nbsp;
+                <strong>Sunday</strong> — farewell brunch
+            </p>
+
+            <div id="rsvpPartyTableHost"></div>
+
+            <div class="rsvp-field-grid">
+                <div class="form-group">
+                    <label for="rsvpChildrenCount">Children attending (whole household)</label>
+                    <input type="number" id="rsvpChildrenCount" min="0" step="1" value="0" class="rsvp-small-num">
+                </div>
+            </div>
+
+            <h3 class="rsvp-subhead">Contact &amp; note for the couple</h3>
+            <p class="rsvp-muted">We’ll save these on everyone in your group so we can reach you.</p>
+            <div class="rsvp-field-grid rsvp-contact-grid">
+                <div class="form-group">
+                    <label for="rsvpSharedEmail">Email</label>
+                    <input type="email" id="rsvpSharedEmail" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="rsvpSharedPhone">Phone</label>
+                    <input type="tel" id="rsvpSharedPhone" autocomplete="tel">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="rsvpSharedQuestion">Question or wisdom for us</label>
+                <textarea id="rsvpSharedQuestion" rows="4"
+                    placeholder="Something thoughtful, fun, or heartfelt…"></textarea>
+            </div>
+
+            <div class="rsvp-save-row">
+                <button type="button" id="rsvpSaveBtn" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save RSVP
+                </button>
+                <span id="rsvpSaveStatus" class="rsvp-status" aria-live="polite"></span>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="rsvp-app.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
