@@ -25,6 +25,54 @@ const db = getFirestore(app);
 
 let cachedGuests = null;
 
+function cabaretInfoModalEl() {
+  return document.getElementById('cabaretInfoModal');
+}
+
+function openCabaretInfoModal() {
+  const m = cabaretInfoModalEl();
+  if (!m) return;
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('cabaretInfoModalClose')?.focus();
+}
+
+function closeCabaretInfoModal() {
+  const m = cabaretInfoModalEl();
+  if (!m) return;
+  m.style.display = 'none';
+  document.body.style.overflow = 'auto';
+}
+
+function initCabaretInfoModal() {
+  const m = cabaretInfoModalEl();
+  if (!m) return;
+
+  m.addEventListener('click', (e) => {
+    if (e.target === m) closeCabaretInfoModal();
+  });
+
+  document.getElementById('cabaretInfoModalClose')?.addEventListener('click', closeCabaretInfoModal);
+
+  document.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== 'Escape') return;
+      if (m.style.display === 'none' || !m.style.display) return;
+      e.preventDefault();
+      closeCabaretInfoModal();
+    },
+    true,
+  );
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.rsvp-cabaret-info-btn')) {
+      e.preventDefault();
+      openCabaretInfoModal();
+    }
+  });
+}
+
 function norm(s) {
   return String(s || '')
     .toLowerCase()
@@ -179,7 +227,12 @@ function renderParty(container, partyResult, sharedContactEl, sharedQuestionEl, 
         <th>Sat</th>
         <th>Sun</th>
         <th>Diet & notes</th>
-        <th>Cabaret</th>
+        <th class="rsvp-cabaret-th">
+          <span class="rsvp-cabaret-th-label">Want to perform in Cabaret?</span>
+          <button type="button" class="rsvp-cabaret-info-btn" aria-label="What is cabaret? (opens a dialog)">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+          </button>
+        </th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -202,7 +255,7 @@ function renderParty(container, partyResult, sharedContactEl, sharedQuestionEl, 
         <input type="text" class="rsvp-notes-input" data-field="notes" placeholder="Notes (allergies, kids meals, …)"
           value="${escapeAttr(g.dietaryNotes || '')}">
       </td>
-      <td><label class="rsvp-inline"><input type="checkbox" data-field="cab" ${g.cabaretInterested ? 'checked' : ''}> Interested</label></td>
+      <td><label class="rsvp-inline"><input type="checkbox" data-field="cab" ${g.cabaretInterested ? 'checked' : ''}> Yes</label></td>
     `;
 
     tbody.appendChild(tr);
@@ -226,6 +279,8 @@ function escapeAttr(s) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initCabaretInfoModal();
+
   const searchInput = document.getElementById('rsvpSearchInput');
   const searchBtn = document.getElementById('rsvpSearchBtn');
   const searchStatus = document.getElementById('rsvpSearchStatus');

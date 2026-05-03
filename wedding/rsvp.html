@@ -57,12 +57,12 @@
         </section>
 
         <section id="rsvpEditor" class="rsvp-card rsvp-editor" hidden>
-            <h2 class="rsvp-card-title">Your party</h2>
-            <p class="rsvp-day-key">
-                <strong>Friday</strong> — welcome dinner, lawn games &amp; cabaret night &nbsp;·&nbsp;
-                <strong>Saturday</strong> — ceremony &amp; reception &nbsp;·&nbsp;
-                <strong>Sunday</strong> — farewell brunch
-            </p>
+            <h2 class="rsvp-card-title">RSVP Status</h2>
+            <div class="rsvp-day-rows" aria-label="What each day includes">
+                <p class="rsvp-day-row"><strong>Friday</strong> — games, welcome dinner &amp; cabaret night</p>
+                <p class="rsvp-day-row"><strong>Saturday</strong> — ceremony &amp; reception</p>
+                <p class="rsvp-day-row"><strong>Sunday</strong> — farewell brunch</p>
+            </div>
 
             <div id="rsvpPartyTableHost"></div>
 
@@ -98,6 +98,29 @@
                 <span id="rsvpSaveStatus" class="rsvp-status" aria-live="polite"></span>
             </div>
         </section>
+    </div>
+
+    <div id="cabaretInfoModal" class="modal rsvp-cabaret-info-modal" role="dialog" aria-modal="true" aria-labelledby="cabaretInfoModalTitle">
+        <div class="modal-content rsvp-cabaret-info-modal-content">
+            <button type="button" class="close rsvp-cabaret-info-modal-close" id="cabaretInfoModalClose" aria-label="Close">&times;</button>
+            <h2 id="cabaretInfoModalTitle" class="rsvp-cabaret-info-modal-title">What is cabaret?</h2>
+            <div class="rsvp-cabaret-info-body">
+                <p><strong>You might be wondering: what exactly is cabaret?</strong></p>
+                <p>In short: it’s your chance to surprise your friends — and yourself.</p>
+                <p><strong>Past acts have included:</strong></p>
+                <ul class="rsvp-info-list">
+                    <li>Whispering in the ears of an ancient soul</li>
+                    <li>A poem or a song</li>
+                    <li>A dance number (with or without the ability to dance)</li>
+                    <li>A magic trick</li>
+                    <li>A dramatic re-enactment of a film scene</li>
+                    <li>An urgent communication from aliens</li>
+                    <li>Any form of self-expression you can dream up</li>
+                </ul>
+                <p>Perform solo or as a group — anything goes. To make space for all performers (and still get a night of sleep), we will likely limit each act to just a few minutes.</p>
+                <p>If you have any questions, reach out to us :)</p>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="rsvp-app.js"></script>
