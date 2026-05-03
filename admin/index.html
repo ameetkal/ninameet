@@ -1,0 +1,2397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Nina &amp; Ameet</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .responses {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .response-item {
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .response-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        .response-item.planning {
+            border-left: 4px solid #059669;
+        }
+        .response-item.cant-make-it {
+            border-left: 4px solid #dc2626;
+        }
+        
+        .response-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9fafb;
+        }
+        
+        .response-header:hover {
+            background: #f3f4f6;
+        }
+        
+        .response-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 15px;
+        }
+        
+        .response-content.expanded {
+            max-height: 500px;
+            padding: 15px;
+        }
+        
+        .response-arrow {
+            transition: transform 0.3s ease;
+            font-size: 18px;
+            color: #6b7280;
+        }
+        
+        .response-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .response-info {
+            text-align: left;
+        }
+        
+        .response-info h3 {
+            margin: 0 0 8px 0;
+            color: #111827;
+            font-size: 16px;
+        }
+        
+        .response-info p {
+            margin: 0 0 6px 0;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .response-info small {
+            color: #6b7280;
+            font-size: 12px;
+        }
+        button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #047857;
+        }
+        
+        /* Request Action Button Styles */
+        .request-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .btn-confirm {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-confirm:hover:not(:disabled) {
+            background: #047857;
+            transform: translateY(-1px);
+        }
+        
+        .btn-decline {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-decline:hover:not(:disabled) {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+        
+        .btn-disabled {
+            background: #9ca3af;
+            color: #6b7280;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: not-allowed;
+            font-weight: 500;
+            opacity: 0.6;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+            
+            .header p {
+                font-size: 0.9rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .tab-button {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .response-item,
+            .nyc-request-item {
+                margin-bottom: 8px;
+            }
+            
+            .response-header,
+            .nyc-request-header {
+                padding: 12px;
+            }
+            
+            .response-info h3,
+            .nyc-request-info h3 {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+            
+            .response-info p,
+            .nyc-request-info p {
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+            
+            .response-content,
+            .nyc-request-content {
+                padding: 12px;
+            }
+            
+            .response-content.expanded,
+            .nyc-request-content.expanded {
+                padding: 12px;
+            }
+            
+            .request-actions {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+            
+            .btn-confirm,
+            .btn-decline,
+            .btn-disabled {
+                width: 100%;
+                max-width: 200px;
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .controls {
+                padding: 15px;
+            }
+            
+            .controls button {
+                width: 100%;
+                margin-bottom: 8px;
+                margin-right: 0;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .responses {
+                padding: 15px;
+            }
+            
+            .calendar-legend {
+                padding: 10px;
+            }
+            
+            .legend-items {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 12px;
+                margin: 10px 5px;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .tab-button {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .response-header,
+            .nyc-request-header {
+                padding: 10px;
+            }
+            
+            .response-content,
+            .nyc-request-content {
+                padding: 10px;
+            }
+            
+            .response-content.expanded,
+            .nyc-request-content.expanded {
+                padding: 10px;
+            }
+            
+            .btn-confirm,
+            .btn-decline,
+            .btn-disabled {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .calendar-grid {
+                gap: 2px;
+            }
+            
+            .calendar-day {
+                padding: 8px 4px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .responses-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        .responses-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #059669;
+            color: white;
+        }
+        
+        .responses-table th {
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #047857;
+            white-space: nowrap;
+        }
+        
+        .responses-table tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+        }
+        
+        .responses-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        .responses-table tbody tr.planning {
+            border-left: 4px solid #059669;
+        }
+        
+        .responses-table tbody tr.cant-make-it {
+            border-left: 4px solid #dc2626;
+        }
+        
+        .responses-table td {
+            padding: 12px;
+            vertical-align: top;
+        }
+        
+        .responses-table td:nth-child(1) {
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .responses-table td:nth-child(4) {
+            max-width: 250px;
+            word-wrap: break-word;
+        }
+        
+        .responses-table td:nth-child(6) {
+            max-width: 300px;
+            word-wrap: break-word;
+            font-style: italic;
+            color: #6b7280;
+        }
+        
+        .attendance-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin: 2px;
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        
+        .btn-edit, .btn-delete {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+        
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #b91c1c;
+        }
+        
+        /* Edit Modal Styles */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+        
+        .edit-modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .edit-modal-content h3 {
+            margin: 0 0 20px 0;
+            color: #059669;
+            font-size: 24px;
+        }
+        
+        .edit-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+        
+        .edit-close:hover {
+            color: #333;
+        }
+        
+        .edit-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .edit-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .edit-form-group input,
+        .edit-form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .edit-form-group input:focus,
+        .edit-form-group textarea:focus {
+            outline: none;
+            border-color: #059669;
+        }
+        
+        .edit-form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .edit-form-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .edit-form-actions button[type="submit"] {
+            background: #059669;
+            color: white;
+        }
+        
+        .edit-form-actions button[type="submit"]:hover {
+            background: #047857;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #059669;
+        }
+
+        /* Tab Styles */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: #059669;
+            color: white;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: #d1d5db;
+        }
+
+        .guest-table-sort-btn {
+            background: transparent;
+            border: none;
+            padding: 4px 8px 4px 0;
+            margin: 0;
+            font: inherit;
+            font-weight: 600;
+            color: inherit;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-align: left;
+        }
+
+        .guest-table-sort-btn:hover {
+            text-decoration: underline;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Date Management Styles */
+        .date-management {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .calendar-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-controls button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .calendar-controls span {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .calendar-container {
+            margin-bottom: 20px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-weight: 600;
+            color: #6b7280;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 15px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: #f3f4f6;
+        }
+
+        .calendar-day.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+            font-weight: bold;
+            box-shadow: 0 0 0 2px #1d4ed8;
+        }
+
+        .calendar-day.booked {
+            background: #dc2626;
+            color: white;
+            border-color: #dc2626;
+        }
+
+        .calendar-day.requested {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        .calendar-day.other-month {
+            color: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .date-selection-info {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            color: #0369a1;
+        }
+        
+        .date-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .date-actions button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .date-actions button:last-child {
+            background: #059669;
+        }
+
+        .date-actions button:hover {
+            opacity: 0.9;
+        }
+
+        /* NYC Request Styles */
+        .nyc-request-item {
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .nyc-request-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        .nyc-request-item.pending {
+            border-left: 4px solid #f59e0b;
+        }
+        .nyc-request-item.confirmed {
+            border-left: 4px solid #059669;
+        }
+        .nyc-request-item.declined {
+            border-left: 4px solid #dc2626;
+        }
+        
+        .nyc-request-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9fafb;
+        }
+        
+        .nyc-request-header:hover {
+            background: #f3f4f6;
+        }
+        
+        .nyc-request-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 15px;
+        }
+        
+        .nyc-request-content.expanded {
+            max-height: 500px;
+            padding: 15px;
+        }
+        
+        .nyc-request-arrow {
+            transition: transform 0.3s ease;
+            font-size: 18px;
+            color: #6b7280;
+        }
+        
+        .nyc-request-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .nyc-request-info {
+            text-align: left;
+        }
+        
+        .nyc-request-info h3 {
+            margin: 0 0 8px 0;
+            color: #111827;
+            font-size: 16px;
+        }
+        
+        .nyc-request-info p {
+            margin: 0 0 6px 0;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .nyc-request-info small {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-declined {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Calendar Legend Styles */
+        .calendar-legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+
+        .legend-color.available {
+            background: #e5e7eb;
+        }
+
+        .legend-color.requested {
+            background: #f59e0b;
+        }
+
+        .legend-color.booked {
+            background: #dc2626;
+        }
+
+        /* Tooltip Styles */
+        .calendar-day {
+            position: relative;
+        }
+
+        .calendar-day:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .calendar-day:hover::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #1f2937;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .calendar-day:hover::after,
+        .calendar-day:hover::before {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="passwordScreen" style="display: block;">
+        <div style="text-align: center; padding: 100px 20px;">
+            <h2>Admin Access Required</h2>
+            <p>Enter password to access the dashboard:</p>
+            <input type="password" id="passwordInput" placeholder="Password" style="padding: 10px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; width: 200px;">
+            <br>
+            <button onclick="checkPassword()" style="margin-top: 10px;">Access Dashboard</button>
+            <p id="passwordError" style="color: red; margin-top: 10px; display: none;">Incorrect password</p>
+        </div>
+    </div>
+
+    <div id="adminDashboard" style="display: none;">
+        <div class="header">
+            <h1>Ninameet Admin Dashboard</h1>
+        </div>
+
+        <!-- Edit Modal -->
+        <div id="editModal" class="edit-modal" style="display: none;">
+            <div class="edit-modal-content">
+                <span class="edit-close" onclick="closeEditModal()">&times;</span>
+                <h3>Edit Response</h3>
+                <form id="editForm" onsubmit="saveEdit(event)">
+                    <div class="edit-form-group">
+                        <label for="editName">Name *</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="editEmail">Email *</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="editPhone">Phone</label>
+                        <input type="tel" id="editPhone">
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="editAttendance">Attendance (comma-separated)</label>
+                        <textarea id="editAttendance" rows="3"></textarea>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="editQuestion">Wisdom/Question</label>
+                        <textarea id="editQuestion" rows="4"></textarea>
+                    </div>
+                    <input type="hidden" id="editResponseId">
+                    <div class="edit-form-actions">
+                        <button type="button" onclick="closeEditModal()" style="background: #6b7280;">Cancel</button>
+                        <button type="submit">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Guest registry: edit guest -->
+        <div id="guestRegistryGuestModal" class="edit-modal" style="display: none;">
+            <div class="edit-modal-content" style="max-width: 520px;">
+                <span class="edit-close" onclick="closeGuestRegistryGuestModal()">&times;</span>
+                <h3 id="guestRegistryGuestModalTitle">Guest</h3>
+                <form id="guestRegistryGuestForm" onsubmit="saveGuestRegistryGuest(event)">
+                    <input type="hidden" id="grGuestMode" value="edit">
+                    <div class="edit-form-group">
+                        <label for="grGuestDocId">Firestore document ID</label>
+                        <input type="text" id="grGuestDocId" required placeholder="e.g. 12_01_jane-doe">
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestGroupId">Group ID</label>
+                        <input type="text" id="grGuestGroupId" required placeholder="Matches spreadsheet household">
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestCanonicalName">Full name</label>
+                        <input type="text" id="grGuestCanonicalName" required>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestEmail">Email</label>
+                        <input type="email" id="grGuestEmail">
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestPhone">Phone</label>
+                        <input type="tel" id="grGuestPhone">
+                    </div>
+                    <div class="edit-form-group">
+                        <label>Days attending</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestFri"> Friday</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestSat"> Saturday</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestSun"> Sunday</label>
+                    </div>
+                    <div class="edit-form-group">
+                        <label>Diet</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestVegan"> Vegan</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestVegetarian"> Vegetarian</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestOther"> Other restriction</label>
+                        <textarea id="grGuestDietNotes" rows="2" placeholder="Notes"></textarea>
+                    </div>
+                    <div class="edit-form-group">
+                        <label><input type="checkbox" id="grGuestCabaret"> Want to perform in Cabaret? (Yes)</label>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGuestQuestion">Wisdom / question</label>
+                        <textarea id="grGuestQuestion" rows="3"></textarea>
+                    </div>
+                    <div class="edit-form-actions">
+                        <button type="button" onclick="closeGuestRegistryGuestModal()" style="background: #6b7280;">Cancel</button>
+                        <button type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Guest registry: edit group -->
+        <div id="guestRegistryGroupModal" class="edit-modal" style="display: none;">
+            <div class="edit-modal-content" style="max-width: 420px;">
+                <span class="edit-close" onclick="closeGuestRegistryGroupModal()">&times;</span>
+                <h3 id="guestRegistryGroupModalTitle">Household</h3>
+                <form id="guestRegistryGroupForm" onsubmit="saveGuestRegistryGroup(event)">
+                    <div class="edit-form-group">
+                        <label for="grGroupDocId">Group ID</label>
+                        <input type="text" id="grGroupDocId" required>
+                    </div>
+                    <div class="edit-form-group">
+                        <label for="grGroupChildren">Children attending (household)</label>
+                        <input type="number" id="grGroupChildren" min="0" step="1" value="0">
+                    </div>
+                    <div class="edit-form-actions">
+                        <button type="button" onclick="closeGuestRegistryGroupModal()" style="background: #6b7280;">Cancel</button>
+                        <button type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button type="button" class="tab-button active" data-tab="guests" onclick="showTab('guests')">Wedding RSVPs</button>
+            <button type="button" class="tab-button" data-tab="wedding" onclick="showTab('wedding')">Legacy form RSVPs</button>
+            <button type="button" class="tab-button" data-tab="nyc" onclick="showTab('nyc')">NYC Stay Management</button>
+        </div>
+
+        <!-- Wedding RSVPs (Firestore guest list) -->
+        <div id="guestsTab" class="tab-content active">
+            <div class="controls">
+                <button onclick="loadGuestRegistry()">🔄 Refresh guests</button>
+                <button onclick="exportGuestRegistryCSV()">📊 Export guests CSV</button>
+                <button onclick="openGuestRegistryGroupModal()">➕ New group</button>
+                <button onclick="openGuestRegistryGuestModal(null)">➕ New guest</button>
+            </div>
+
+            <div class="responses">
+                <h2>Guests</h2>
+                <div class="table-container">
+                    <table class="responses-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    <button type="button" class="guest-table-sort-btn" onclick="sortGuestRegistryBy('canonicalName')">Name <span id="guestSortIconName" aria-hidden="true"></span></button>
+                                </th>
+                                <th scope="col">
+                                    <button type="button" class="guest-table-sort-btn" onclick="sortGuestRegistryBy('groupId')">Group <span id="guestSortIconGroup" aria-hidden="true"></span></button>
+                                </th>
+                                <th>Email</th>
+                                <th>Fri</th>
+                                <th>Sat</th>
+                                <th>Sun</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guestRegistryGuestsBody">
+                            <tr><td colspan="7" class="loading">Click &quot;Refresh guests&quot; to load.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legacy form RSVPs (historical wedding-responses) -->
+        <div id="weddingTab" class="tab-content">
+            <div class="stats" id="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCount">-</div>
+                    <div>Total Responses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="planningCount">-</div>
+                    <div>Planning to Come</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="cantMakeItCount">-</div>
+                    <div>Can't Make It</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="loadResponses()">🔄 Refresh Data</button>
+                <button onclick="exportToCSV()">📊 Export to CSV</button>
+            </div>
+
+            <div class="responses">
+                <h2>All Responses</h2>
+                <div class="table-container">
+                    <table id="responsesTable" class="responses-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Attendance</th>
+                                <th>Submitted</th>
+                                <th>Wisdom/Question</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responsesList">
+                            <tr>
+                                <td colspan="7" class="loading">Click "Refresh Data" to load responses...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- NYC Stay Management Tab -->
+        <div id="nycTab" class="tab-content">
+            <div class="stats" id="nycStats">
+                <div class="stat-card">
+                    <div class="stat-number" id="nycTotalCount">-</div>
+                    <div>Total Requests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="nycPendingCount">-</div>
+                    <div>Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="nycConfirmedCount">-</div>
+                    <div>Confirmed</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button onclick="loadNYCRequests()">🔄 Refresh NYC Data</button>
+                                        <button onclick="exportNYCToCSV()">📊 Export NYC to CSV</button>
+            </div>
+
+            <div class="responses">
+                <h2>NYC Stay Requests</h2>
+                <div id="nycRequestsList" class="loading">
+                    Click "Refresh NYC Data" to load requests...
+                </div>
+            </div>
+
+            <div class="date-management">
+                <h2>Date Management</h2>
+                <div class="calendar-controls">
+                    <button onclick="previousMonth()">‹</button>
+                    <span id="currentMonthDisplay">October 2025</span>
+                    <button onclick="nextMonth()">›</button>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-grid" id="adminCalendarGrid">
+                        <!-- Calendar will be populated by JavaScript -->
+                    </div>
+                </div>
+                                        <div class="date-selection-info" id="dateSelectionInfo" style="display: none;">
+                            <p><strong>Selected Dates:</strong> <span id="selectedDatesCount">0</span></p>
+                        </div>
+                        <div class="date-actions">
+                            <button onclick="blockSelectedDates()">🚫 Block Selected Dates</button>
+                            <button onclick="unblockSelectedDates()">✅ Unblock Selected Dates</button>
+                        </div>
+                
+                <!-- Calendar Legend -->
+                <div class="calendar-legend">
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color available"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color requested"></div>
+                            <span>Requested</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color booked"></div>
+                            <span>Booked</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- Close adminDashboard div -->
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, orderBy, query, addDoc, serverTimestamp, doc, setDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Your Firebase configuration (same as main site)
+        const firebaseConfig = {
+            apiKey: "AIzaSyB108IDQksvWLhANDsTm04lVl3fvjlULWY",
+            authDomain: "ninameet-1eb2e.firebaseapp.com",
+            projectId: "ninameet-1eb2e",
+            storageBucket: "ninameet-1eb2e.firebasestorage.app",
+            messagingSenderId: "819954601528",
+            appId: "1:819954601528:web:bcfdfba23fb7fa119020cd"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let responses = [];
+
+        // Migration mapping for old values to new values
+        const migrationMap = {
+            "Friday Night Welcome + Cabaret": "Friday Night Welcome Dinner + Cabaret",
+            "Saturday Morning Games": "Friday Evening Games"
+        };
+
+        // Helper function to migrate attendance values
+        function migrateAttendanceValue(value) {
+            return migrationMap[value] || value;
+        }
+
+        // Helper function to migrate an array of attendance selections
+        function migrateAttendanceArray(attendanceSelections) {
+            if (!Array.isArray(attendanceSelections)) {
+                return attendanceSelections;
+            }
+            return attendanceSelections.map(val => migrateAttendanceValue(val));
+        }
+
+        window.loadResponses = async function() {
+            const responsesList = document.getElementById('responsesList');
+            responsesList.innerHTML = '<div class="loading">Loading responses...</div>';
+
+            try {
+                const q = query(collection(db, 'wedding-responses'), orderBy('timestamp', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                responses = [];
+                querySnapshot.forEach((doc) => {
+                    responses.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                displayResponses();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading responses:', error);
+                responsesList.innerHTML = '<div style="color: red;">Error loading responses. Check console for details.</div>';
+            }
+        };
+
+        function displayResponses() {
+            const responsesList = document.getElementById('responsesList');
+            
+            if (responses.length === 0) {
+                responsesList.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #666;">No responses yet.</td></tr>';
+                return;
+            }
+
+            const html = responses.map((response, index) => {
+                const date = response.timestamp ? 
+                    new Date(response.timestamp.seconds * 1000).toLocaleString() : 
+                    new Date(response.createdAt).toLocaleString();
+                
+                // Handle both old and new response formats
+                let responseClass = 'cant-make-it'; // default
+                let attendanceHTML = '';
+                
+                if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
+                    // New format with attendance selections - migrate old values
+                    const migratedSelections = migrateAttendanceArray(response.attendanceSelections);
+                    
+                    // Sort attendance selections: Friday Evening Games first, then Friday Night Welcome Dinner + Cabaret, then others
+                    const sortedSelections = migratedSelections.sort((a, b) => {
+                        if (a === "Friday Evening Games") return -1;
+                        if (b === "Friday Evening Games") return 1;
+                        if (a === "Friday Night Welcome Dinner + Cabaret") return -1;
+                        if (b === "Friday Night Welcome Dinner + Cabaret") return 1;
+                        return a.localeCompare(b);
+                    });
+                    
+                    const isAttending = sortedSelections.some(selection => 
+                        !selection.includes("can't make it") && !selection.includes("None")
+                    );
+                    responseClass = isAttending ? 'planning' : 'cant-make-it';
+                    
+                    // Create badges for each selection (with migrated and sorted values)
+                    attendanceHTML = sortedSelections.map(selection => 
+                        `<span class="attendance-badge">${selection}</span>`
+                    ).join(' ');
+                } else if (response.response) {
+                    // Old format with single response
+                    responseClass = response.response.includes('Planning') ? 'planning' : 'cant-make-it';
+                    attendanceHTML = response.response;
+                } else {
+                    attendanceHTML = '<em>No response data</em>';
+                }
+                
+                const phone = response.phone || '-';
+                const question = response.question || '<em>No question submitted</em>';
+                
+                return `
+                    <tr class="${responseClass}" data-id="${response.id}">
+                        <td>${response.fullName}</td>
+                        <td>${response.email}</td>
+                        <td>${phone}</td>
+                        <td>${attendanceHTML}</td>
+                        <td>${date}</td>
+                        <td>${question}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-edit" onclick="editResponse('${response.id}')">✏️ Edit</button>
+                                <button class="btn-delete" onclick="deleteResponse('${response.id}')">🗑️ Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            responsesList.innerHTML = html;
+        }
+
+        function updateStats() {
+            const total = responses.length;
+            
+            // Handle both old and new response formats for statistics (with migration)
+            let planning = 0;
+            let cantMakeIt = 0;
+            
+            responses.forEach(r => {
+                if (r.attendanceSelections && Array.isArray(r.attendanceSelections)) {
+                    // New format with attendance selections - migrate old values
+                    const migratedSelections = migrateAttendanceArray(r.attendanceSelections);
+                    const isAttending = migratedSelections.some(selection => 
+                        !selection.includes("can't make it") && !selection.includes("None")
+                    );
+                    if (isAttending) {
+                        planning++;
+                    } else {
+                        cantMakeIt++;
+                    }
+                } else if (r.response) {
+                    // Old format with single response
+                    const migratedResponse = migrateAttendanceValue(r.response);
+                    if (migratedResponse.includes('Planning')) {
+                        planning++;
+                    } else if (migratedResponse.includes("Can't")) {
+                        cantMakeIt++;
+                    }
+                }
+            });
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('planningCount').textContent = planning;
+            document.getElementById('cantMakeItCount').textContent = cantMakeIt;
+        }
+
+        window.exportToCSV = function() {
+            if (responses.length === 0) {
+                alert('No data to export. Please refresh data first.');
+                return;
+            }
+
+            const headers = ['Name', 'Email', 'Phone', 'Attendance', 'Submitted', 'Wisdom/Question'];
+            const csvContent = [
+                headers.join(','),
+                ...responses.map(response => {
+                    const date = response.timestamp ? 
+                        new Date(response.timestamp.seconds * 1000).toISOString() : 
+                        response.createdAt;
+                    
+                    // Handle both old and new response formats for CSV export (with migration and sorting)
+                    let responseData = '';
+                    if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
+                        // Migrate values before exporting
+                        const migratedSelections = migrateAttendanceArray(response.attendanceSelections);
+                        
+                        // Sort: Friday Evening Games first, then Friday Night Welcome Dinner + Cabaret, then others
+                        const sortedSelections = migratedSelections.sort((a, b) => {
+                            if (a === "Friday Evening Games") return -1;
+                            if (b === "Friday Evening Games") return 1;
+                            if (a === "Friday Night Welcome Dinner + Cabaret") return -1;
+                            if (b === "Friday Night Welcome Dinner + Cabaret") return 1;
+                            return a.localeCompare(b);
+                        });
+                        
+                        responseData = sortedSelections.join('; ');
+                    } else if (response.response) {
+                        responseData = migrateAttendanceValue(response.response);
+                    } else {
+                        responseData = 'No response data';
+                    }
+                    
+                    return [
+                        `"${response.fullName}"`,
+                        `"${response.email}"`,
+                        `"${response.phone || ''}"`,
+                        `"${responseData}"`,
+                        `"${date}"`,
+                        `"${response.question || ''}"`
+                    ].join(',');
+                })
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `wedding-responses-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+
+        // Migration function to update all existing RSVP records in Firebase
+        window.migrateRSVPOptions = async function() {
+            if (!confirm('This will update all existing RSVP records in Firebase to use the new option names. This action cannot be undone. Continue?')) {
+                return;
+            }
+
+            try {
+                const { updateDoc, doc, getDocs, collection } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                // Load all responses
+                const q = query(collection(db, 'wedding-responses'));
+                const querySnapshot = await getDocs(q);
+                
+                let updatedCount = 0;
+                let skippedCount = 0;
+                
+                // Process each document
+                for (const docSnap of querySnapshot.docs) {
+                    const data = docSnap.data();
+                    let needsUpdate = false;
+                    const updateData = {};
+                    
+                    // Check if attendanceSelections needs migration
+                    if (data.attendanceSelections && Array.isArray(data.attendanceSelections)) {
+                        const migratedSelections = migrateAttendanceArray(data.attendanceSelections);
+                        
+                        // Check if any values changed
+                        const hasChanges = data.attendanceSelections.some((val, idx) => val !== migratedSelections[idx]);
+                        
+                        if (hasChanges) {
+                            updateData.attendanceSelections = migratedSelections;
+                            needsUpdate = true;
+                        }
+                    }
+                    
+                    // Check if old 'response' field needs migration
+                    if (data.response && migrationMap[data.response]) {
+                        updateData.response = migrateAttendanceValue(data.response);
+                        needsUpdate = true;
+                    }
+                    
+                    if (needsUpdate) {
+                        const docRef = doc(db, 'wedding-responses', docSnap.id);
+                        await updateDoc(docRef, updateData);
+                        updatedCount++;
+                    } else {
+                        skippedCount++;
+                    }
+                }
+                
+                alert(`Migration complete!\n- Updated: ${updatedCount} records\n- No changes needed: ${skippedCount} records\n\nPlease refresh the data to see the changes.`);
+                
+                // Reload responses to show updated values
+                loadResponses();
+                
+            } catch (error) {
+                console.error('Error migrating RSVP options:', error);
+                alert(`Error during migration: ${error.message}. Please check the console for details.`);
+            }
+        };
+
+        // ----- Wedding RSVPs tab (wedding-guests; groups edited via New group modal) -----
+        let guestRegistryGuests = [];
+        let guestRegistryGuestSort = { key: 'canonicalName', dir: 1 };
+
+        function normGuestSearch(name) {
+            return String(name || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+
+        function getSortedGuestRegistryGuests() {
+            const arr = [...guestRegistryGuests];
+            const k = guestRegistryGuestSort.key;
+            const d = guestRegistryGuestSort.dir;
+            arr.sort((a, b) => {
+                const va = k === 'groupId' ? String(a.groupId ?? '') : normGuestSearch(a.canonicalName ?? '');
+                const vb = k === 'groupId' ? String(b.groupId ?? '') : normGuestSearch(b.canonicalName ?? '');
+                const cmp = va.localeCompare(vb, undefined, { numeric: true, sensitivity: 'base' });
+                return d * cmp;
+            });
+            return arr;
+        }
+
+        function updateGuestSortHeaderIcons() {
+            const nIcon = document.getElementById('guestSortIconName');
+            const gIcon = document.getElementById('guestSortIconGroup');
+            if (!nIcon || !gIcon) return;
+            nIcon.textContent =
+                guestRegistryGuestSort.key === 'canonicalName' ? (guestRegistryGuestSort.dir === 1 ? '▲' : '▼') : '';
+            gIcon.textContent =
+                guestRegistryGuestSort.key === 'groupId' ? (guestRegistryGuestSort.dir === 1 ? '▲' : '▼') : '';
+        }
+
+        window.sortGuestRegistryBy = function(key) {
+            if (guestRegistryGuestSort.key === key) {
+                guestRegistryGuestSort.dir *= -1;
+            } else {
+                guestRegistryGuestSort.key = key;
+                guestRegistryGuestSort.dir = 1;
+            }
+            renderGuestRegistryTables();
+        };
+
+        window.loadGuestRegistry = async function() {
+            const eb = document.getElementById('guestRegistryGuestsBody');
+            eb.innerHTML = '<tr><td colspan="7" class="loading">Loading…</td></tr>';
+
+            try {
+                const ysnap = await getDocs(collection(db, 'wedding-guests'));
+                guestRegistryGuests = ysnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                renderGuestRegistryTables();
+            } catch (error) {
+                console.error(error);
+                eb.innerHTML = '<tr><td colspan="7" style="color:red;">Error loading guests.</td></tr>';
+            }
+        };
+
+        function renderGuestRegistryTables() {
+            const eb = document.getElementById('guestRegistryGuestsBody');
+            updateGuestSortHeaderIcons();
+
+            if (guestRegistryGuests.length === 0) {
+                eb.innerHTML = '<tr><td colspan="7">No guest documents yet.</td></tr>';
+            } else {
+                const rows = getSortedGuestRegistryGuests();
+                eb.innerHTML = rows.map((y) => `
+                    <tr>
+                        <td>${y.canonicalName || ''}</td>
+                        <td>${y.groupId ?? ''}</td>
+                        <td>${y.email || ''}</td>
+                        <td>${y.attendingFriday ? '✓' : ''}</td>
+                        <td>${y.attendingSaturday ? '✓' : ''}</td>
+                        <td>${y.attendingSunday ? '✓' : ''}</td>
+                        <td>
+                            <button onclick="openGuestRegistryGuestModalEncoded('${encodeURIComponent(y.id)}')">✏️</button>
+                            <button onclick="deleteGuestRegistryGuestEncoded('${encodeURIComponent(y.id)}')">🗑️</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        window.openGuestRegistryGuestModalEncoded = function(enc) {
+            const id = decodeURIComponent(enc);
+            const guest = guestRegistryGuests.find((g) => g.id === id);
+            window.openGuestRegistryGuestModal(guest || null);
+        };
+
+        window.openGuestRegistryGuestModal = function(guest) {
+            document.getElementById('guestRegistryGuestModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            const modeEl = document.getElementById('grGuestMode');
+            const idEl = document.getElementById('grGuestDocId');
+
+            if (!guest) {
+                modeEl.value = 'add';
+                document.getElementById('guestRegistryGuestModalTitle').textContent = 'New guest';
+                idEl.readOnly = false;
+                idEl.value = '';
+                document.getElementById('grGuestGroupId').value = '';
+                document.getElementById('grGuestCanonicalName').value = '';
+                document.getElementById('grGuestEmail').value = '';
+                document.getElementById('grGuestPhone').value = '';
+                document.getElementById('grGuestFri').checked = false;
+                document.getElementById('grGuestSat').checked = false;
+                document.getElementById('grGuestSun').checked = false;
+                document.getElementById('grGuestVegan').checked = false;
+                document.getElementById('grGuestVegetarian').checked = false;
+                document.getElementById('grGuestOther').checked = false;
+                document.getElementById('grGuestDietNotes').value = '';
+                document.getElementById('grGuestCabaret').checked = false;
+                document.getElementById('grGuestQuestion').value = '';
+                return;
+            }
+
+            modeEl.value = 'edit';
+            document.getElementById('guestRegistryGuestModalTitle').textContent = 'Edit guest';
+            idEl.readOnly = true;
+            idEl.value = guest.id;
+            document.getElementById('grGuestGroupId').value = guest.groupId ?? '';
+            document.getElementById('grGuestCanonicalName').value = guest.canonicalName || '';
+            document.getElementById('grGuestEmail').value = guest.email || '';
+            document.getElementById('grGuestPhone').value = guest.phone || '';
+            document.getElementById('grGuestFri').checked = !!guest.attendingFriday;
+            document.getElementById('grGuestSat').checked = !!guest.attendingSaturday;
+            document.getElementById('grGuestSun').checked = !!guest.attendingSunday;
+            document.getElementById('grGuestVegan').checked = !!guest.dietaryVegan;
+            document.getElementById('grGuestVegetarian').checked = !!guest.dietaryVegetarian;
+            document.getElementById('grGuestOther').checked = !!guest.dietaryOther;
+            document.getElementById('grGuestDietNotes').value = guest.dietaryNotes || '';
+            document.getElementById('grGuestCabaret').checked = !!guest.cabaretInterested;
+            document.getElementById('grGuestQuestion').value = guest.question || '';
+        };
+
+        window.closeGuestRegistryGuestModal = function() {
+            document.getElementById('guestRegistryGuestModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        window.saveGuestRegistryGuest = async function(event) {
+            event.preventDefault();
+
+            const mode = document.getElementById('grGuestMode').value;
+            const guestDocId = document.getElementById('grGuestDocId').value.trim();
+            const canonicalName = document.getElementById('grGuestCanonicalName').value.trim();
+            const groupId = document.getElementById('grGuestGroupId').value.trim();
+            const email = document.getElementById('grGuestEmail').value.trim();
+            const phone = document.getElementById('grGuestPhone').value.trim();
+
+            if (!guestDocId || !canonicalName || !groupId) {
+                alert('Document ID, name, and group are required.');
+                return;
+            }
+
+            const payload = {
+                canonicalName,
+                groupId,
+                email,
+                emailLower: email.toLowerCase(),
+                phone,
+                searchName: normGuestSearch(canonicalName),
+                attendingFriday: document.getElementById('grGuestFri').checked,
+                attendingSaturday: document.getElementById('grGuestSat').checked,
+                attendingSunday: document.getElementById('grGuestSun').checked,
+                dietaryVegan: document.getElementById('grGuestVegan').checked,
+                dietaryVegetarian: document.getElementById('grGuestVegetarian').checked,
+                dietaryOther: document.getElementById('grGuestOther').checked,
+                dietaryNotes: document.getElementById('grGuestDietNotes').value.trim(),
+                cabaretInterested: document.getElementById('grGuestCabaret').checked,
+                question: document.getElementById('grGuestQuestion').value.trim(),
+                updatedAt: serverTimestamp(),
+            };
+
+            try {
+                if (mode === 'add') {
+                    payload.createdAt = serverTimestamp();
+                    payload.legacySubmissionIds = [];
+                }
+
+                await setDoc(doc(db, 'wedding-guests', guestDocId), payload, { merge: true });
+
+                closeGuestRegistryGuestModal();
+                alert('Guest saved.');
+                loadGuestRegistry();
+            } catch (error) {
+                console.error(error);
+                alert('Could not save guest: ' + error.message);
+            }
+        };
+
+        window.deleteGuestRegistryGuestEncoded = async function(enc) {
+            const id = decodeURIComponent(enc);
+            if (!confirm(`Delete guest document "${id}"? This cannot be undone.`)) return;
+
+            try {
+                await deleteDoc(doc(db, 'wedding-guests', id));
+                alert('Guest deleted.');
+                loadGuestRegistry();
+            } catch (error) {
+                console.error(error);
+                alert('Could not delete: ' + error.message);
+            }
+        };
+
+        window.openGuestRegistryGroupModal = function(group) {
+            document.getElementById('guestRegistryGroupModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            const idEl = document.getElementById('grGroupDocId');
+
+            if (!group) {
+                document.getElementById('guestRegistryGroupModalTitle').textContent = 'New household';
+                idEl.readOnly = false;
+                idEl.value = '';
+                document.getElementById('grGroupChildren').value = '0';
+                return;
+            }
+
+            document.getElementById('guestRegistryGroupModalTitle').textContent = 'Edit household';
+            idEl.readOnly = true;
+            idEl.value = group.id;
+            document.getElementById('grGroupChildren').value = String(group.childrenCount ?? 0);
+        };
+
+        window.closeGuestRegistryGroupModal = function() {
+            document.getElementById('guestRegistryGroupModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        window.saveGuestRegistryGroup = async function(event) {
+            event.preventDefault();
+
+            const gid = document.getElementById('grGroupDocId').value.trim();
+            const childrenCount = Math.max(0, parseInt(document.getElementById('grGroupChildren').value, 10) || 0);
+
+            if (!gid) {
+                alert('Group ID is required.');
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, 'wedding-groups', gid), {
+                    groupNumber: Number(gid),
+                    childrenCount,
+                    updatedAt: serverTimestamp(),
+                }, { merge: true });
+
+                closeGuestRegistryGroupModal();
+                alert('Household saved.');
+                loadGuestRegistry();
+            } catch (error) {
+                console.error(error);
+                alert('Could not save household: ' + error.message);
+            }
+        };
+
+        window.exportGuestRegistryCSV = function() {
+            if (guestRegistryGuests.length === 0) {
+                alert('Refresh guests first (Wedding RSVPs tab).');
+                return;
+            }
+
+            const headers = [
+                'guestDocId', 'canonicalName', 'groupId', 'email', 'phone',
+                'attendingFriday', 'attendingSaturday', 'attendingSunday',
+                'dietaryVegan', 'dietaryVegetarian', 'dietaryOther', 'dietaryNotes',
+                'cabaretInterested', 'question',
+            ];
+
+            const rows = guestRegistryGuests.map((y) =>
+                headers.map((h) => {
+                    const v = y[h];
+                    if (v === undefined || v === null) return '""';
+                    const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
+                    return '"' + s.replace(/"/g, '""') + '"';
+                }).join(','),
+            );
+
+            const csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `wedding-guests-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
+
+
+        // Password protection
+        window.checkPassword = function() {
+            const password = document.getElementById('passwordInput').value;
+            if (password === 'kallarou') {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                // Load data after successful login (default tab: Wedding RSVPs)
+                loadGuestRegistry();
+            } else {
+                document.getElementById('passwordError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        };
+
+        // Allow Enter key to submit password
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                window.checkPassword();
+            }
+        });
+
+        // Tab switching
+        window.showTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            const panel = document.getElementById(tabName + 'Tab');
+            if (panel) panel.classList.add('active');
+
+            document.querySelector(`.tab-button[data-tab="${tabName}"]`)?.classList.add('active');
+
+            if (tabName === 'nyc') {
+                loadNYCRequests();
+                loadBlockedDates();
+                renderAdminCalendar();
+            }
+
+            if (tabName === 'guests') {
+                loadGuestRegistry();
+            }
+
+            if (tabName === 'wedding') {
+                loadResponses();
+            }
+        };
+
+        // NYC Data Management
+        let nycRequests = [];
+        let blockedDates = [];
+        let adminCurrentDate = new Date();
+        let selectedDates = [];
+
+        window.loadNYCRequests = async function() {
+            const requestsList = document.getElementById('nycRequestsList');
+            requestsList.innerHTML = '<div class="loading">Loading NYC requests...</div>';
+
+            try {
+                const q = query(collection(db, 'nyc-stay-requests'), orderBy('timestamp', 'desc'));
+                const querySnapshot = await getDocs(q);
+                
+                nycRequests = [];
+                querySnapshot.forEach((doc) => {
+                    nycRequests.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                displayNYCRequests();
+                updateNYCStats();
+            } catch (error) {
+                console.error('Error loading NYC requests:', error);
+                requestsList.innerHTML = '<div style="color: red;">Error loading NYC requests. Check console for details.</div>';
+            }
+        };
+
+        function displayNYCRequests() {
+            const requestsList = document.getElementById('nycRequestsList');
+            
+            if (nycRequests.length === 0) {
+                requestsList.innerHTML = '<div>No NYC requests yet.</div>';
+                return;
+            }
+
+            const html = nycRequests.map((request, index) => {
+                const date = request.timestamp ? 
+                    new Date(request.timestamp.seconds * 1000).toLocaleDateString() : 
+                    new Date().toLocaleDateString();
+                
+                const dates = request.dates.map(timestamp => 
+                    new Date(timestamp).toLocaleDateString()
+                ).join(', ');
+                
+                const statusClass = `status-${request.status}`;
+                
+                return `
+                    <div class="nyc-request-item ${request.status}" onclick="toggleNYCRequest(${index})">
+                        <div class="nyc-request-header">
+                            <div class="nyc-request-info">
+                                <h3>${request.visitors.join(', ')}</h3>
+                                <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${request.status}</span></p>
+                            </div>
+                            <div class="nyc-request-arrow">▼</div>
+                        </div>
+                        <div class="nyc-request-content" id="nyc-request-content-${index}">
+                            <p><strong>Dates:</strong> ${dates}</p>
+                            <p><strong>Skill:</strong> ${request.skill}</p>
+                            <p><small><strong>Submitted:</strong> ${date}</small></p>
+                            ${request.additionalInfo ? `<p><strong>Additional Info:</strong> ${request.additionalInfo}</p>` : ''}
+                            <div class="request-actions" onclick="event.stopPropagation()">
+                                <button onclick="updateStatus('${request.id}', 'confirmed')" 
+                                        ${request.status === 'confirmed' ? 'disabled' : ''} 
+                                        class="${request.status === 'confirmed' ? 'btn-disabled' : 'btn-confirm'}">
+                                    ${request.status === 'confirmed' ? '✅ Confirmed' : '✅ Confirm'}
+                                </button>
+                                <button onclick="updateStatus('${request.id}', 'declined')" 
+                                        ${request.status === 'declined' ? 'disabled' : ''} 
+                                        class="${request.status === 'declined' ? 'btn-disabled' : 'btn-decline'}">
+                                    ${request.status === 'declined' ? '❌ Declined' : '❌ Decline'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            requestsList.innerHTML = html;
+        }
+
+        function updateNYCStats() {
+            const total = nycRequests.length;
+            const pending = nycRequests.filter(r => r.status === 'pending').length;
+            const confirmed = nycRequests.filter(r => r.status === 'confirmed').length;
+
+            document.getElementById('nycTotalCount').textContent = total;
+            document.getElementById('nycPendingCount').textContent = pending;
+            document.getElementById('nycConfirmedCount').textContent = confirmed;
+        }
+
+        // Export functions for NYC data
+        window.exportNYCToCSV = function() {
+            if (nycRequests.length === 0) {
+                alert('No NYC data to export. Please refresh data first.');
+                return;
+            }
+
+            const headers = ['Visitors', 'Dates', 'Skill', 'Additional Info', 'Status', 'Submitted'];
+            const csvContent = [
+                headers.join(','),
+                ...nycRequests.map(request => {
+                    const date = request.timestamp ? 
+                        new Date(request.timestamp.seconds * 1000).toISOString() : 
+                        new Date().toISOString();
+                    
+                    const dates = request.dates.map(timestamp => 
+                        new Date(timestamp).toISOString().split('T')[0]
+                    ).join('; ');
+                    
+                    return [
+                        `"${request.visitors.join('; ')}"`,
+                        `"${dates}"`,
+                        `"${request.skill}"`,
+                        `"${request.additionalInfo || ''}"`,
+                        `"${request.status}"`,
+                        `"${date}"`
+                    ].join(',');
+                })
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nyc-stay-requests-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+
+
+
+        // Date Management Functions
+        window.previousMonth = function() {
+            adminCurrentDate.setMonth(adminCurrentDate.getMonth() - 1);
+            renderAdminCalendar();
+        };
+
+        window.nextMonth = function() {
+            adminCurrentDate.setMonth(adminCurrentDate.getMonth() + 1);
+            renderAdminCalendar();
+        };
+
+        function renderAdminCalendar() {
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const currentMonth = adminCurrentDate.getMonth();
+            const currentYear = adminCurrentDate.getFullYear();
+            
+            document.getElementById('currentMonthDisplay').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+            
+            const grid = document.getElementById('adminCalendarGrid');
+            grid.innerHTML = '';
+            
+            // Add weekday headers
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-weekday';
+                dayHeader.textContent = day;
+                grid.appendChild(dayHeader);
+            });
+            
+            // Add calendar days
+            for (let i = 0; i < 42; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = date.getDate();
+                
+                if (date.getMonth() !== currentMonth) {
+                    dayElement.classList.add('other-month');
+                } else {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    if (date < today) {
+                        dayElement.classList.add('other-month');
+                    } else if (isDateBooked(date)) {
+                        dayElement.classList.add('booked');
+                        // Add tooltip for booked dates
+                        const tooltip = getDateTooltip(date, 'booked');
+                        if (tooltip) {
+                            dayElement.setAttribute('data-tooltip', tooltip);
+                        }
+                    } else if (isDateRequested(date)) {
+                        dayElement.classList.add('requested');
+                        // Add tooltip for requested dates
+                        const tooltip = getDateTooltip(date, 'requested');
+                        if (tooltip) {
+                            dayElement.setAttribute('data-tooltip', tooltip);
+                        }
+                    }
+                    
+                    // Check if this date is currently selected
+                    if (selectedDates.some(selectedDate => 
+                        date.toDateString() === selectedDate.toDateString()
+                    )) {
+                        dayElement.classList.add('selected');
+                    }
+                    
+                    dayElement.addEventListener('click', () => toggleDateSelection(date));
+                }
+                
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function isDateBooked(date) {
+            // Check if date is blocked by admin
+            const isBlocked = blockedDates.some(blockedDate => 
+                date.toDateString() === new Date(blockedDate.date.seconds * 1000).toDateString()
+            );
+            
+            // Check if date is confirmed
+            const isConfirmed = nycRequests.some(request => 
+                request.status === 'confirmed' && 
+                request.dates.some(requestDate => 
+                    date.toDateString() === new Date(requestDate).toDateString()
+                )
+            );
+            
+            return isBlocked || isConfirmed;
+        }
+
+        function isDateRequested(date) {
+            return nycRequests.some(request => 
+                request.status === 'pending' && 
+                request.dates.some(requestDate => 
+                    date.toDateString() === new Date(requestDate).toDateString()
+                )
+            );
+        }
+
+        function toggleDateSelection(date) {
+            const dateString = date.toDateString();
+            const index = selectedDates.findIndex(d => d.toDateString() === dateString);
+            
+            if (index > -1) {
+                selectedDates.splice(index, 1);
+            } else {
+                selectedDates.push(date);
+            }
+            
+            updateSelectionDisplay();
+            renderAdminCalendar();
+        }
+
+        function updateSelectionDisplay() {
+            const selectionInfo = document.getElementById('dateSelectionInfo');
+            const selectedCount = document.getElementById('selectedDatesCount');
+            
+            if (selectedDates.length > 0) {
+                selectionInfo.style.display = 'block';
+                selectedCount.textContent = selectedDates.length;
+            } else {
+                selectionInfo.style.display = 'none';
+            }
+        }
+
+        window.blockSelectedDates = async function() {
+            if (selectedDates.length === 0) {
+                alert('Please select dates to block.');
+                return;
+            }
+
+            try {
+                const blockButton = document.querySelector('button[onclick="blockSelectedDates()"]');
+                const originalText = blockButton.textContent;
+                blockButton.textContent = 'Blocking...';
+                blockButton.disabled = true;
+
+                for (const date of selectedDates) {
+                    await addDoc(collection(db, 'blocked-dates'), {
+                        date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+                        reason: 'Admin blocked',
+                        blockedBy: 'Admin',
+                        timestamp: serverTimestamp()
+                    });
+                }
+                
+                alert(`Successfully blocked ${selectedDates.length} date(s).`);
+                selectedDates = [];
+                loadBlockedDates();
+                renderAdminCalendar();
+                
+            } catch (error) {
+                console.error('Error blocking dates:', error);
+                alert(`Error blocking dates: ${error.message}. Please try again.`);
+            } finally {
+                const blockButton = document.querySelector('button[onclick="blockSelectedDates()"]');
+                blockButton.textContent = originalText;
+                blockButton.disabled = false;
+            }
+        };
+
+        window.unblockSelectedDates = async function() {
+            if (selectedDates.length === 0) {
+                alert('Please select dates to unblock.');
+                return;
+            }
+
+            // This would require additional Firebase functions to delete documents
+            // For now, we'll just show a message
+            alert('Unblocking dates requires additional setup. Please manually remove from Firebase console for now.');
+            selectedDates = [];
+            renderAdminCalendar();
+        };
+
+        async function loadBlockedDates() {
+            try {
+                const q = query(collection(db, 'blocked-dates'));
+                const querySnapshot = await getDocs(q);
+                
+                blockedDates = [];
+                querySnapshot.forEach((doc) => {
+                    blockedDates.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading blocked dates:', error);
+            }
+        }
+
+        // Generate tooltips for calendar dates
+        function getDateTooltip(date, status) {
+            if (status === 'booked') {
+                // Check if it's blocked by admin
+                const blockedDate = blockedDates.find(blockedDate => 
+                    date.toDateString() === new Date(blockedDate.date.seconds * 1000).toDateString()
+                );
+                
+                if (blockedDate) {
+                    return `Blocked: ${blockedDate.reason}`;
+                }
+                
+                // Check if it's confirmed
+                const confirmedRequest = nycRequests.find(request => 
+                    request.status === 'confirmed' && 
+                    request.dates.some(requestDate => 
+                        date.toDateString() === new Date(requestDate).toDateString()
+                    )
+                );
+                
+                if (confirmedRequest) {
+                    return `Confirmed: ${confirmedRequest.visitors.join(', ')} - ${confirmedRequest.skill}`;
+                }
+            }
+            
+            if (status === 'requested') {
+                const pendingRequest = nycRequests.find(request => 
+                    request.status === 'pending' && 
+                    request.dates.some(requestDate => 
+                        date.toDateString() === new Date(requestDate).toDateString()
+                    )
+                );
+                
+                if (pendingRequest) {
+                    return `Pending: ${pendingRequest.visitors.join(', ')} - ${pendingRequest.skill}`;
+                }
+            }
+            
+            return null;
+        }
+
+        // Update NYC request status
+        window.updateStatus = async function(requestId, newStatus) {
+            try {
+                // Import the updateDoc function and serverTimestamp
+                const { updateDoc, doc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                // Update the document in Firebase
+                const requestRef = doc(db, 'nyc-stay-requests', requestId);
+                await updateDoc(requestRef, {
+                    status: newStatus,
+                    updatedAt: serverTimestamp()
+                });
+                
+                // Update local data
+                const requestIndex = nycRequests.findIndex(r => r.id === requestId);
+                if (requestIndex !== -1) {
+                    nycRequests[requestIndex].status = newStatus;
+                    nycRequests[requestIndex].updatedAt = new Date();
+                }
+                
+                // Refresh the display
+                displayNYCRequests();
+                updateNYCStats();
+                renderAdminCalendar();
+                
+                alert(`Request ${newStatus} successfully!`);
+                
+            } catch (error) {
+                console.error('Error updating status:', error);
+                alert('Error updating status. Please try again.');
+            }
+        };
+
+        // Accordion toggle function (only for NYC requests now)
+
+        window.toggleNYCRequest = function(index) {
+            const content = document.getElementById(`nyc-request-content-${index}`);
+            const arrow = content.previousElementSibling.querySelector('.nyc-request-arrow');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                arrow.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                arrow.classList.add('expanded');
+            }
+        };
+
+        // Edit Response Function - Opens Modal
+        window.editResponse = function(responseId) {
+            const response = responses.find(r => r.id === responseId);
+            if (!response) {
+                alert('Response not found.');
+                return;
+            }
+
+            // Populate the form with current values
+            document.getElementById('editName').value = response.fullName || '';
+            document.getElementById('editEmail').value = response.email || '';
+            document.getElementById('editPhone').value = response.phone || '';
+            
+            // Handle attendance field (with migration)
+            let currentAttendance = '';
+            if (response.attendanceSelections && Array.isArray(response.attendanceSelections)) {
+                // Migrate old values before showing in edit form
+                const migratedSelections = migrateAttendanceArray(response.attendanceSelections);
+                currentAttendance = migratedSelections.join(', ');
+            } else if (response.response) {
+                currentAttendance = migrateAttendanceValue(response.response);
+            }
+            document.getElementById('editAttendance').value = currentAttendance;
+            
+            document.getElementById('editQuestion').value = response.question || '';
+            document.getElementById('editResponseId').value = responseId;
+
+            // Show the modal
+            document.getElementById('editModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        };
+
+        // Close Edit Modal
+        window.closeEditModal = function() {
+            document.getElementById('editModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        // Save Edit Function
+        window.saveEdit = async function(event) {
+            event.preventDefault();
+
+            const responseId = document.getElementById('editResponseId').value;
+            const newName = document.getElementById('editName').value;
+            const newEmail = document.getElementById('editEmail').value;
+            const newPhone = document.getElementById('editPhone').value;
+            const attendanceNote = document.getElementById('editAttendance').value;
+            const newQuestion = document.getElementById('editQuestion').value;
+
+            const response = responses.find(r => r.id === responseId);
+            if (!response) {
+                alert('Response not found.');
+                return;
+            }
+
+            try {
+                const { updateDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                // Parse attendance back to array if it contains commas
+                let attendanceUpdate = {};
+                if (attendanceNote.includes(',')) {
+                    attendanceUpdate.attendanceSelections = attendanceNote.split(',').map(s => s.trim()).filter(s => s);
+                } else if (response.attendanceSelections) {
+                    attendanceUpdate.attendanceSelections = attendanceNote ? [attendanceNote.trim()] : [];
+                } else {
+                    attendanceUpdate.response = attendanceNote.trim();
+                }
+                
+                const responseRef = doc(db, 'wedding-responses', responseId);
+                await updateDoc(responseRef, {
+                    fullName: newName.trim(),
+                    email: newEmail.trim(),
+                    phone: newPhone.trim(),
+                    question: newQuestion.trim(),
+                    ...attendanceUpdate
+                });
+
+                closeEditModal();
+                alert('Response updated successfully!');
+                loadResponses(); // Reload to show changes
+            } catch (error) {
+                console.error('Error updating response:', error);
+                alert('Error updating response. Please try again.');
+            }
+        };
+
+        // Delete Response Function
+        window.deleteResponse = async function(responseId) {
+            const response = responses.find(r => r.id === responseId);
+            if (!response) {
+                alert('Response not found.');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete the response from ${response.fullName}? This cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const { deleteDoc, doc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+                
+                const responseRef = doc(db, 'wedding-responses', responseId);
+                await deleteDoc(responseRef);
+
+                alert('Response deleted successfully!');
+                loadResponses(); // Reload to show changes
+            } catch (error) {
+                console.error('Error deleting response:', error);
+                alert('Error deleting response. Please try again.');
+            }
+        };
+    </script>
+</body>
+</html> 
