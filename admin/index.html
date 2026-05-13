@@ -1033,6 +1033,7 @@
                     </div>
                     <div class="edit-form-group">
                         <label>Diet</label>
+                        <label style="display:block;"><input type="checkbox" id="grGuestNoRestrictions"> No dietary restrictions</label>
                         <label style="display:block;"><input type="checkbox" id="grGuestVegan"> Vegan</label>
                         <label style="display:block;"><input type="checkbox" id="grGuestVegetarian"> Vegetarian</label>
                         <label style="display:block;"><input type="checkbox" id="grGuestOther"> Other restriction</label>
@@ -1563,7 +1564,13 @@
 
             const dietaryPrefs = guestRegistryGuests.filter((g) => {
                 const notes = String(g.dietaryNotes || '').trim();
-                return !!g.dietaryVegan || !!g.dietaryVegetarian || !!g.dietaryOther || notes.length > 0;
+                return (
+                    !!g.dietaryNoRestrictions ||
+                    !!g.dietaryVegan ||
+                    !!g.dietaryVegetarian ||
+                    !!g.dietaryOther ||
+                    notes.length > 0
+                );
             }).length;
 
             const childrenTotal = guestRegistryGroups.reduce((sum, grp) => {
@@ -1680,6 +1687,7 @@
                 document.getElementById('grGuestFri').checked = false;
                 document.getElementById('grGuestSat').checked = false;
                 document.getElementById('grGuestSun').checked = false;
+                document.getElementById('grGuestNoRestrictions').checked = false;
                 document.getElementById('grGuestVegan').checked = false;
                 document.getElementById('grGuestVegetarian').checked = false;
                 document.getElementById('grGuestOther').checked = false;
@@ -1700,10 +1708,19 @@
             document.getElementById('grGuestFri').checked = !!guest.attendingFriday;
             document.getElementById('grGuestSat').checked = !!guest.attendingSaturday;
             document.getElementById('grGuestSun').checked = !!guest.attendingSunday;
-            document.getElementById('grGuestVegan').checked = !!guest.dietaryVegan;
-            document.getElementById('grGuestVegetarian').checked = !!guest.dietaryVegetarian;
-            document.getElementById('grGuestOther').checked = !!guest.dietaryOther;
-            document.getElementById('grGuestDietNotes').value = guest.dietaryNotes || '';
+            const noRes = !!guest.dietaryNoRestrictions;
+            document.getElementById('grGuestNoRestrictions').checked = noRes;
+            if (noRes) {
+                document.getElementById('grGuestVegan').checked = false;
+                document.getElementById('grGuestVegetarian').checked = false;
+                document.getElementById('grGuestOther').checked = false;
+                document.getElementById('grGuestDietNotes').value = '';
+            } else {
+                document.getElementById('grGuestVegan').checked = !!guest.dietaryVegan;
+                document.getElementById('grGuestVegetarian').checked = !!guest.dietaryVegetarian;
+                document.getElementById('grGuestOther').checked = !!guest.dietaryOther;
+                document.getElementById('grGuestDietNotes').value = guest.dietaryNotes || '';
+            }
             document.getElementById('grGuestCabaret').checked = !!guest.cabaretInterested;
             document.getElementById('grGuestQuestion').value = guest.question || '';
         };
@@ -1728,6 +1745,23 @@
                 return;
             }
 
+            const noRestrictions = document.getElementById('grGuestNoRestrictions').checked;
+            const dietPayload = noRestrictions
+                ? {
+                      dietaryNoRestrictions: true,
+                      dietaryVegan: false,
+                      dietaryVegetarian: false,
+                      dietaryOther: false,
+                      dietaryNotes: '',
+                  }
+                : {
+                      dietaryNoRestrictions: false,
+                      dietaryVegan: document.getElementById('grGuestVegan').checked,
+                      dietaryVegetarian: document.getElementById('grGuestVegetarian').checked,
+                      dietaryOther: document.getElementById('grGuestOther').checked,
+                      dietaryNotes: document.getElementById('grGuestDietNotes').value.trim(),
+                  };
+
             const payload = {
                 canonicalName,
                 groupId,
@@ -1738,10 +1772,7 @@
                 attendingFriday: document.getElementById('grGuestFri').checked,
                 attendingSaturday: document.getElementById('grGuestSat').checked,
                 attendingSunday: document.getElementById('grGuestSun').checked,
-                dietaryVegan: document.getElementById('grGuestVegan').checked,
-                dietaryVegetarian: document.getElementById('grGuestVegetarian').checked,
-                dietaryOther: document.getElementById('grGuestOther').checked,
-                dietaryNotes: document.getElementById('grGuestDietNotes').value.trim(),
+                ...dietPayload,
                 cabaretInterested: document.getElementById('grGuestCabaret').checked,
                 question: document.getElementById('grGuestQuestion').value.trim(),
                 updatedAt: serverTimestamp(),
@@ -1763,6 +1794,31 @@
                 alert('Could not save guest: ' + error.message);
             }
         };
+
+        (function wireAdminGuestDietMutualExclusion() {
+            const noEl = document.getElementById('grGuestNoRestrictions');
+            const veganEl = document.getElementById('grGuestVegan');
+            const vegEl = document.getElementById('grGuestVegetarian');
+            const otherEl = document.getElementById('grGuestOther');
+            const notesEl = document.getElementById('grGuestDietNotes');
+            if (!noEl || !veganEl || !vegEl || !otherEl || !notesEl) return;
+            noEl.addEventListener('change', () => {
+                if (noEl.checked) {
+                    veganEl.checked = false;
+                    vegEl.checked = false;
+                    otherEl.checked = false;
+                    notesEl.value = '';
+                }
+            });
+            [veganEl, vegEl, otherEl].forEach((el) => {
+                el.addEventListener('change', () => {
+                    if (el.checked) noEl.checked = false;
+                });
+            });
+            notesEl.addEventListener('input', () => {
+                if (notesEl.value.trim()) noEl.checked = false;
+            });
+        })();
 
         window.deleteGuestRegistryGuestEncoded = async function(enc) {
             const id = decodeURIComponent(enc);
@@ -1839,7 +1895,7 @@
             const headers = [
                 'guestDocId', 'canonicalName', 'groupId', 'email', 'phone',
                 'attendingFriday', 'attendingSaturday', 'attendingSunday',
-                'dietaryVegan', 'dietaryVegetarian', 'dietaryOther', 'dietaryNotes',
+                'dietaryNoRestrictions', 'dietaryVegan', 'dietaryVegetarian', 'dietaryOther', 'dietaryNotes',
                 'cabaretInterested', 'question',
             ];
 

@@ -147,27 +147,86 @@ function collectPayloadFromDom(hostEl, partyGuests, sharedEmail, sharedPhone, sh
 
     const q = (sel) => row.querySelector(sel);
 
+    const noneChecked = !!q('[data-field="none"]')?.checked;
+    const dietBase = {
+      attendingFriday: !!q('[data-field="fri"]')?.checked,
+      attendingSaturday: !!q('[data-field="sat"]')?.checked,
+      attendingSunday: !!q('[data-field="sun"]')?.checked,
+      cabaretInterested: !!q('[data-field="cab"]')?.checked,
+      email: sharedEmail.trim(),
+      phone: sharedPhone.trim(),
+      emailLower: sharedEmail.trim().toLowerCase(),
+      question: sharedQuestion.trim(),
+      updatedAt: serverTimestamp(),
+    };
+
+    if (noneChecked) {
+      return {
+        ref: doc(db, 'wedding-guests', g.id),
+        data: {
+          ...dietBase,
+          dietaryNoRestrictions: true,
+          dietaryVegan: false,
+          dietaryVegetarian: false,
+          dietaryOther: false,
+          dietaryNotes: '',
+        },
+      };
+    }
+
     return {
       ref: doc(db, 'wedding-guests', g.id),
       data: {
-        attendingFriday: !!q('[data-field="fri"]')?.checked,
-        attendingSaturday: !!q('[data-field="sat"]')?.checked,
-        attendingSunday: !!q('[data-field="sun"]')?.checked,
+        ...dietBase,
+        dietaryNoRestrictions: false,
         dietaryVegan: !!q('[data-field="vegan"]')?.checked,
         dietaryVegetarian: !!q('[data-field="veg"]')?.checked,
         dietaryOther: !!q('[data-field="other"]')?.checked,
         dietaryNotes: q('[data-field="notes"]')?.value?.trim() || '',
-        cabaretInterested: !!q('[data-field="cab"]')?.checked,
-        email: sharedEmail.trim(),
-        phone: sharedPhone.trim(),
-        emailLower: sharedEmail.trim().toLowerCase(),
-        question: sharedQuestion.trim(),
-        updatedAt: serverTimestamp(),
       },
     };
   }).filter(Boolean);
 
   return rows;
+}
+
+function wireDietaryMutualExclusion(table) {
+  table.addEventListener('change', (ev) => {
+    const target = ev.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    const row = target.closest('tr[data-guest-id]');
+    if (!row) return;
+    const dietCell = target.closest('.rsvp-diet-cell');
+    if (!dietCell) return;
+
+    const field = target.getAttribute('data-field');
+    if (!field || !['none', 'vegan', 'veg', 'other'].includes(field)) return;
+
+    const noneEl = row.querySelector('[data-field="none"]');
+    const veganEl = row.querySelector('[data-field="vegan"]');
+    const vegEl = row.querySelector('[data-field="veg"]');
+    const otherEl = row.querySelector('[data-field="other"]');
+    const notesEl = row.querySelector('[data-field="notes"]');
+
+    if (field === 'none' && target.checked) {
+      if (veganEl) veganEl.checked = false;
+      if (vegEl) vegEl.checked = false;
+      if (otherEl) otherEl.checked = false;
+      if (notesEl) notesEl.value = '';
+    } else if (field !== 'none' && target.checked) {
+      if (noneEl) noneEl.checked = false;
+    }
+  });
+
+  table.addEventListener('input', (ev) => {
+    const target = ev.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    if (target.getAttribute('data-field') !== 'notes') return;
+    const row = target.closest('tr[data-guest-id]');
+    if (!row) return;
+    const noneEl = row.querySelector('[data-field="none"]');
+    if (noneEl && target.value.trim()) noneEl.checked = false;
+  });
 }
 
 async function saveParty(hostEl, partyGuests, groupChildrenInput, sharedEmail, sharedPhone, sharedQuestion) {
@@ -243,17 +302,24 @@ function renderParty(container, partyResult, sharedContactEl, sharedQuestionEl, 
     const tr = document.createElement('tr');
     tr.dataset.guestId = g.id;
 
+    const noRes = !!g.dietaryNoRestrictions;
+    const veg = !!g.dietaryVegan && !noRes;
+    const vegetarian = !!g.dietaryVegetarian && !noRes;
+    const other = !!g.dietaryOther && !noRes;
+    const notesVal = noRes ? '' : String(g.dietaryNotes || '');
+
     tr.innerHTML = `
       <td class="rsvp-name-cell">${escapeHtml(g.canonicalName)}</td>
       <td><input type="checkbox" data-field="fri" ${g.attendingFriday ? 'checked' : ''} aria-label="Friday"></td>
       <td><input type="checkbox" data-field="sat" ${g.attendingSaturday ? 'checked' : ''} aria-label="Saturday"></td>
       <td><input type="checkbox" data-field="sun" ${g.attendingSunday ? 'checked' : ''} aria-label="Sunday"></td>
       <td class="rsvp-diet-cell">
-        <label class="rsvp-inline"><input type="checkbox" data-field="vegan" ${g.dietaryVegan ? 'checked' : ''}> Vegan</label>
-        <label class="rsvp-inline"><input type="checkbox" data-field="veg" ${g.dietaryVegetarian ? 'checked' : ''}> Vegetarian</label>
-        <label class="rsvp-inline"><input type="checkbox" data-field="other" ${g.dietaryOther ? 'checked' : ''}> Other</label>
+        <label class="rsvp-inline"><input type="checkbox" data-field="none" ${noRes ? 'checked' : ''}> No dietary restrictions</label>
+        <label class="rsvp-inline"><input type="checkbox" data-field="vegan" ${veg ? 'checked' : ''}> Vegan</label>
+        <label class="rsvp-inline"><input type="checkbox" data-field="veg" ${vegetarian ? 'checked' : ''}> Vegetarian</label>
+        <label class="rsvp-inline"><input type="checkbox" data-field="other" ${other ? 'checked' : ''}> Other</label>
         <input type="text" class="rsvp-notes-input" data-field="notes" placeholder="Notes (allergies, kids meals, …)"
-          value="${escapeAttr(g.dietaryNotes || '')}">
+          value="${escapeAttr(notesVal)}">
       </td>
       <td><label class="rsvp-inline"><input type="checkbox" data-field="cab" ${g.cabaretInterested ? 'checked' : ''}> Yes</label></td>
     `;
@@ -261,6 +327,7 @@ function renderParty(container, partyResult, sharedContactEl, sharedQuestionEl, 
     tbody.appendChild(tr);
   });
 
+  wireDietaryMutualExclusion(table);
   container.appendChild(table);
 
   saveStatusEl.textContent = '';
