@@ -1131,11 +1131,14 @@
                                 <th>Fri</th>
                                 <th>Sat</th>
                                 <th>Sun</th>
+                                <th scope="col">
+                                    <button type="button" class="guest-table-sort-btn" onclick="sortGuestRegistryBy('updatedAt')">Last saved <span id="guestSortIconUpdatedAt" aria-hidden="true"></span></button>
+                                </th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="guestRegistryGuestsBody">
-                            <tr><td colspan="7" class="loading">Click &quot;Refresh guests&quot; to load.</td></tr>
+                            <tr><td colspan="8" class="loading">Click &quot;Refresh guests&quot; to load.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -1553,6 +1556,19 @@
             return String(name || '').toLowerCase().replace(/\s+/g, ' ').trim();
         }
 
+        function guestUpdatedAtMs(guest) {
+            const ts = guest?.updatedAt;
+            if (!ts) return null;
+            if (ts.seconds != null) return ts.seconds * 1000;
+            const d = new Date(ts);
+            return Number.isNaN(d.getTime()) ? null : d.getTime();
+        }
+
+        function formatGuestUpdatedAt(guest) {
+            const ms = guestUpdatedAtMs(guest);
+            return ms != null ? new Date(ms).toLocaleString() : '';
+        }
+
         function computeGuestRegistryStats() {
             const invitedAdults = guestRegistryGuests.length;
 
@@ -1590,6 +1606,14 @@
             const k = guestRegistryGuestSort.key;
             const d = guestRegistryGuestSort.dir;
             arr.sort((a, b) => {
+                if (k === 'updatedAt') {
+                    const va = guestUpdatedAtMs(a);
+                    const vb = guestUpdatedAtMs(b);
+                    if (va == null && vb == null) return 0;
+                    if (va == null) return 1;
+                    if (vb == null) return -1;
+                    return d * (va - vb);
+                }
                 const va = k === 'groupId' ? String(a.groupId ?? '') : normGuestSearch(a.canonicalName ?? '');
                 const vb = k === 'groupId' ? String(b.groupId ?? '') : normGuestSearch(b.canonicalName ?? '');
                 const cmp = va.localeCompare(vb, undefined, { numeric: true, sensitivity: 'base' });
@@ -1601,11 +1625,14 @@
         function updateGuestSortHeaderIcons() {
             const nIcon = document.getElementById('guestSortIconName');
             const gIcon = document.getElementById('guestSortIconGroup');
-            if (!nIcon || !gIcon) return;
+            const uIcon = document.getElementById('guestSortIconUpdatedAt');
+            if (!nIcon || !gIcon || !uIcon) return;
             nIcon.textContent =
                 guestRegistryGuestSort.key === 'canonicalName' ? (guestRegistryGuestSort.dir === 1 ? '▲' : '▼') : '';
             gIcon.textContent =
                 guestRegistryGuestSort.key === 'groupId' ? (guestRegistryGuestSort.dir === 1 ? '▲' : '▼') : '';
+            uIcon.textContent =
+                guestRegistryGuestSort.key === 'updatedAt' ? (guestRegistryGuestSort.dir === 1 ? '▲' : '▼') : '';
         }
 
         window.sortGuestRegistryBy = function(key) {
@@ -1620,7 +1647,7 @@
 
         window.loadGuestRegistry = async function() {
             const eb = document.getElementById('guestRegistryGuestsBody');
-            eb.innerHTML = '<tr><td colspan="7" class="loading">Loading…</td></tr>';
+            eb.innerHTML = '<tr><td colspan="8" class="loading">Loading…</td></tr>';
 
             try {
                 const [ysnap, gsnap] = await Promise.all([
@@ -1632,7 +1659,7 @@
                 renderGuestRegistryTables();
             } catch (error) {
                 console.error(error);
-                eb.innerHTML = '<tr><td colspan="7" style="color:red;">Error loading guests.</td></tr>';
+                eb.innerHTML = '<tr><td colspan="8" style="color:red;">Error loading guests.</td></tr>';
             }
         };
 
@@ -1642,7 +1669,7 @@
             computeGuestRegistryStats();
 
             if (guestRegistryGuests.length === 0) {
-                eb.innerHTML = '<tr><td colspan="7">No guest documents yet.</td></tr>';
+                eb.innerHTML = '<tr><td colspan="8">No guest documents yet.</td></tr>';
             } else {
                 const rows = getSortedGuestRegistryGuests();
                 eb.innerHTML = rows.map((y) => `
@@ -1653,6 +1680,7 @@
                         <td>${y.attendingFriday ? '✓' : ''}</td>
                         <td>${y.attendingSaturday ? '✓' : ''}</td>
                         <td>${y.attendingSunday ? '✓' : ''}</td>
+                        <td>${formatGuestUpdatedAt(y) || '—'}</td>
                         <td>
                             <button onclick="openGuestRegistryGuestModalEncoded('${encodeURIComponent(y.id)}')">✏️</button>
                             <button onclick="deleteGuestRegistryGuestEncoded('${encodeURIComponent(y.id)}')">🗑️</button>
@@ -1896,13 +1924,13 @@
                 'guestDocId', 'canonicalName', 'groupId', 'email', 'phone',
                 'attendingFriday', 'attendingSaturday', 'attendingSunday',
                 'dietaryNoRestrictions', 'dietaryVegan', 'dietaryVegetarian', 'dietaryOther', 'dietaryNotes',
-                'cabaretInterested', 'question',
+                'cabaretInterested', 'question', 'lastSaved',
             ];
 
             const rows = guestRegistryGuests.map((y) =>
                 headers.map((h) => {
-                    const v = y[h];
-                    if (v === undefined || v === null) return '""';
+                    const v = h === 'lastSaved' ? formatGuestUpdatedAt(y) : y[h];
+                    if (v === undefined || v === null || v === '') return '""';
                     const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
                     return '"' + s.replace(/"/g, '""') + '"';
                 }).join(','),
