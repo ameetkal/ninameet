@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Trivia - Nina &amp; Ameet</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="wedding-subpage trivia-page">
+    <canvas id="backgroundCanvas"></canvas>
+    <div id="floatingElements"></div>
+
+    <nav class="wedding-nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">Nina &amp; Ameet</a>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="rsvp.html" class="nav-link">RSVP</a>
+                <a href="schedule.html" class="nav-link">Schedule</a>
+                <a href="travel.html" class="nav-link">Travel</a>
+                <a href="story.html" class="nav-link">Our Story</a>
+                <a href="registry.html" class="nav-link">Registry</a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container trivia-flow-wrap">
+        <header class="trivia-flow-header">
+            <h1 class="main-title trivia-flow-title">Wedding Trivia</h1>
+            <p class="trivia-flow-lead">
+                Answer all 9 questions correctly, then visit the Welcome table to collect your punchcard confirmation.
+            </p>
+        </header>
+
+        <section class="rsvp-card trivia-card">
+            <div class="trivia-progress" aria-label="Progress">
+                <div class="trivia-progress-meta">
+                    <span id="triviaProgressText">0 / 9 correct</span>
+                </div>
+                <div class="trivia-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="triviaProgressBar">
+                    <div class="trivia-progress-fill" id="triviaProgressFill"></div>
+                </div>
+            </div>
+
+            <div id="triviaQuestionsHost" class="trivia-questions"></div>
+        </section>
+    </div>
+
+    <div id="triviaCompleteModal" class="modal trivia-complete-modal" role="dialog" aria-modal="true" aria-labelledby="triviaCompleteTitle" hidden>
+        <div class="modal-content trivia-complete-modal-content">
+            <button type="button" class="close trivia-complete-close" id="triviaCompleteClose" aria-label="Close">&times;</button>
+            <div class="trivia-complete-icon" aria-hidden="true"><i class="fas fa-check-circle"></i></div>
+            <h2 id="triviaCompleteTitle" class="trivia-complete-title">You did it!</h2>
+            <p class="trivia-complete-body">
+                Nice work — you answered every question correctly. Please visit the <strong>Welcome table</strong> to collect your punchcard confirmation.
+            </p>
+            <button type="button" class="btn btn-primary trivia-complete-btn" id="triviaCompleteOk">Got it</button>
+        </div>
+    </div>
+
+    <script type="module" src="trivia-app.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>
